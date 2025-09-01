@@ -112,20 +112,27 @@
     <!-- Auth Screen -->
     <div id="auth-screen" class="min-h-screen flex items-center justify-center">
         <div class="card p-8 rounded-2xl w-full max-w-md">
-            <h2 class="text-3xl font-bold text-center mb-6 header-title">Вход в систему</h2>
-            <form id="login-form">
+            <h2 id="auth-title" class="text-3xl font-bold text-center mb-6 header-title">Вход в систему</h2>
+            <form id="auth-form">
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium form-label mb-1">Email</label>
                     <input type="email" id="email" required class="form-input w-full px-4 py-2 border rounded-lg transition">
                 </div>
-                <div class="mb-6">
+                <div class="mb-4">
                     <label for="password" class="block text-sm font-medium form-label mb-1">Пароль</label>
                     <input type="password" id="password" required class="form-input w-full px-4 py-2 border rounded-lg transition">
                 </div>
-                <button type="submit" class="btn-primary w-full font-semibold py-2.5 px-4 rounded-lg transition duration-300">Войти</button>
+                <div id="confirm-password-container" class="mb-6 hidden">
+                     <label for="confirm-password" class="block text-sm font-medium form-label mb-1">Подтвердите пароль</label>
+                     <input type="password" id="confirm-password" class="form-input w-full px-4 py-2 border rounded-lg transition">
+                </div>
+                <button id="auth-button" type="submit" class="btn-primary w-full font-semibold py-2.5 px-4 rounded-lg transition duration-300">Войти</button>
             </form>
-            <p id="auth-error" class="text-red-500 text-center mt-4 text-sm"></p>
-             <p class="text-center mt-4 text-sm form-label">Нет аккаунта? Обратитесь к администратору.</p>
+            <p id="auth-message" class="text-center mt-4 text-sm"></p>
+            <p class="text-center mt-4 text-sm form-label">
+                <span id="auth-toggle-prompt">Нет аккаунта?</span>
+                <a href="#" id="toggle-auth-mode" class="font-semibold text-yellow-500 hover:underline">Зарегистрироваться</a>
+            </p>
         </div>
     </div>
 
@@ -250,7 +257,7 @@
         };
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, updateDoc, deleteDoc, writeBatch, getDocs, runTransaction, query, orderBy, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- Global State & Constants ---
@@ -260,6 +267,7 @@
         let allMaterials = [];
         let currentFilter = 'All';
         let sortConfig = { category: 'Утвержденная самоклейка', direction: 'asc' };
+        let isLoginMode = true;
 
         const nomenclatureMap = { 'Бумажная полуглянцевая': 'semi gloss paper am/aw01/yellow glassine(fz)', 'Белая полимерная': '60# pp pearl film(tc)/acrylic w05/white glassine', 'Прозрачный хрусталь': '50# transparent pp film(tc)/acrylic 32/30# pet liner', 'Императорский синий': 'BeautyStick(1-15)Blue', 'Императорский красный': 'BeautyStick(01-15)Silver', 'Императорское золото': 'BeautyStick(1-15)Gold', 'Императорское серебро': 'BeautyStick(1-15)Red', 'Глянцевое серебро': 'Bright Silver PP 50um/AS500/white glassine', 'Голографическое серебро': '50PP TRANSPARENT AS500WG60 125г/м2+MPET12 мкм WP-02 Радуга', 'Прозрачный сахар': 'Glitter Transparent LamiFilm(05-90)GT-LT85-30P', };
         const materialNameSuggestions = { 'Утвержденная самоклейка': ['Бумажная полуглянцевая', 'Белая полимерная', 'Прозрачный хрусталь', 'Императорский синий', 'Императорский красный', 'Императорское золото', 'Императорское серебро', 'Глянцевое серебро', 'Голографическое серебро', 'Прозрачный сахар'], 'Самоклейка тест': ['Бумажная - белая термобумага', 'Бумажная - полуглянцевая', 'Бумажная - белая винная', 'Бумажная - белая матовая', 'Бумажная - белая термобумага морозостойкая', 'Бумажная - белая полуглянцевая бумага', 'Бумажная - серебряная глянцевая бумага', 'Бумажная - серебряная матовая бумага', 'Бумажная - китайская полуглянцевая бумага', 'Полимерная - белая', 'Полимерная - мутная прозрачка', 'Полимерная - супер прозрачная', 'Полимерная - прозрачная', 'Полимерная - серебряная глянцевая', 'Полимерная - белая мутная', 'Полимерная - тонкая прозрачная', 'Другие - прозрачный ПВХ'], 'Не утвержденная самоклейка': ['Голографическая радуга', 'Черная самоклейка с тач покрытием', 'Мутная прозрачка (Pe85)', 'Винная бумага (Antarctic white от Стиктрейд)'], 'Фольга ДжетТач': [], 'Фольга DMS': ['Фольга золото ППФ', 'Фольга серебро ППФ', 'Фольга голография ППФ', 'Фольга зеленая ППФ', 'Фольга голография ДубльВ', 'Фольга золото ДубльВ', 'Фольга серебро ДубльВ'], 'Краска': ['GIP White', 'GIP Cyan', 'GIP Magenta', 'GIP Yellow', 'GIP Key'], 'Жидкие расходники': ['Антифриз Felix G12', 'Вода дистиллированная Oilright', 'Антифриз Prestone (для GIP)', 'Wash (для GIP)', 'Лак DMS SJ-SM01', 'Этилацетат (для мойки)', 'Метоксипропанол (УФ смывка)', 'Изопропиловый спирт (для мойки)', 'Platenclene (Очиститель валов)', 'Матовый лак VMG UV Flexo', 'Матовый лак Танзор Графилак UV 903', 'Праймер Танзор Графилак UV 368', 'Праймер Артмарк BUF-6301D-4', 'Wash DMS SJ-QX01', 'Водный раствор аммиака ЧДА'] };
@@ -298,7 +306,7 @@
             });
             
             setupEventListeners();
-            handleCategoryChange();
+            updateAuthView();
         });
 
         // --- Helper Functions ---
@@ -334,24 +342,92 @@
             errorContainer.classList.remove('hidden');
         }
 
+        function updateAuthView() {
+            const authTitle = document.getElementById('auth-title');
+            const authButton = document.getElementById('auth-button');
+            const confirmPasswordContainer = document.getElementById('confirm-password-container');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const authTogglePrompt = document.getElementById('auth-toggle-prompt');
+            const toggleAuthModeLink = document.getElementById('toggle-auth-mode');
+            const authMessage = document.getElementById('auth-message');
+
+            authMessage.textContent = ''; 
+
+            if (isLoginMode) {
+                authTitle.textContent = 'Вход в систему';
+                authButton.textContent = 'Войти';
+                confirmPasswordContainer.classList.add('hidden');
+                confirmPasswordInput.required = false;
+                authTogglePrompt.textContent = 'Нет аккаунта? ';
+                toggleAuthModeLink.textContent = 'Зарегистрироваться';
+            } else {
+                authTitle.textContent = 'Регистрация';
+                authButton.textContent = 'Зарегистрироваться';
+                confirmPasswordContainer.classList.remove('hidden');
+                confirmPasswordInput.required = true;
+                authTogglePrompt.textContent = 'Уже есть аккаунт? ';
+                toggleAuthModeLink.textContent = 'Войти';
+            }
+        }
+
+
         // --- Event Listeners Setup ---
         function setupEventListeners() {
             // Auth Listeners
-            const loginForm = document.getElementById('login-form');
-            const authError = document.getElementById('auth-error');
-            loginForm.addEventListener('submit', async (e) => {
+            document.getElementById('toggle-auth-mode').addEventListener('click', (e) => {
                 e.preventDefault();
-                authError.textContent = '';
+                isLoginMode = !isLoginMode;
+                updateAuthView();
+            });
+
+            document.getElementById('auth-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const authMessage = document.getElementById('auth-message');
+                authMessage.textContent = '';
+                authMessage.classList.remove('text-green-500', 'text-red-500');
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                } catch (error) {
-                    console.error("Login Error:", error);
-                    if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                        authError.textContent = 'Неверный email или пароль.';
-                    } else {
-                        authError.textContent = 'Произошла ошибка входа.';
+
+                if (isLoginMode) {
+                    try {
+                        await signInWithEmailAndPassword(auth, email, password);
+                    } catch (error) {
+                        console.error("Login Error:", error);
+                        authMessage.classList.add('text-red-500');
+                        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                            authMessage.textContent = 'Неверный email или пароль.';
+                        } else {
+                            authMessage.textContent = 'Произошла ошибка входа.';
+                        }
+                    }
+                } else { // Registration Mode
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    if (password !== confirmPassword) {
+                        authMessage.textContent = 'Пароли не совпадают.';
+                        authMessage.classList.add('text-red-500');
+                        return;
+                    }
+                    if (password.length < 6) {
+                        authMessage.textContent = 'Пароль должен быть не менее 6 символов.';
+                        authMessage.classList.add('text-red-500');
+                        return;
+                    }
+                    try {
+                        await createUserWithEmailAndPassword(auth, email, password);
+                        authMessage.textContent = 'Регистрация прошла успешно! Теперь вы можете войти.';
+                        authMessage.classList.add('text-green-500');
+                        isLoginMode = true;
+                        updateAuthView();
+                    } catch (error) {
+                        console.error("Registration Error:", error);
+                        authMessage.classList.add('text-red-500');
+                        if (error.code === 'auth/email-already-in-use') {
+                            authMessage.textContent = 'Этот email уже зарегистрирован.';
+                        } else if (error.code === 'auth/weak-password') {
+                            authMessage.textContent = 'Пароль слишком слабый.';
+                        } else {
+                            authMessage.textContent = 'Произошла ошибка регистрации.';
+                        }
                     }
                 }
             });
@@ -645,7 +721,7 @@
                     logItem.classList.add(isAdd ? 'history-item-add' : 'history-item-subtract');
                     const date = entry.timestamp.toDate().toLocaleString('ru-RU');
                     const changeText = isAdd ? `+${entry.change}` : `${entry.change}`;
-                    const changeColor = isAdd ? 'text-green-700' : 'text-red-700';
+                    const changeColor = isAdd ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
                     const typeText = isAdd ? 'Приход' : 'Списание';
                     const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : '';
                     const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : '';
