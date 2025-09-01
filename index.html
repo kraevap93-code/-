@@ -139,26 +139,35 @@
     <!-- Main App Screen (hidden by default) -->
     <div id="app-screen" class="hidden">
          <div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-5xl">
-            <header class="mb-8 relative flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="text-center sm:text-left order-2 sm:order-1 sm:w-1/3">
-                    <p class="text-sm text-secondary">Вы вошли как:</p>
-                    <div class="flex items-center gap-2">
-                        <p id="user-email" class="font-semibold header-title break-all"></p>
-                        <button id="global-history-btn" class="hidden text-sm bg-blue-500 text-white font-semibold px-3 py-1 rounded-md hover:bg-blue-600 transition">Общая история</button>
-                    </div>
-                    <button id="logout-btn" class="text-sm text-red-500 hover:underline mt-1">Выйти</button>
-                </div>
-                <div class="text-center order-1 sm:order-2 sm:w-1/3">
-                    <h1 class="text-2xl sm:text-3xl font-bold header-title">Материалы рулонной этикетки</h1>
-                </div>
-                <div class="order-3 sm:w-1/3 flex justify-center sm:justify-end">
-                    <label for="theme-toggle" class="flex items-center cursor-pointer">
-                        <div class="relative">
-                            <input type="checkbox" id="theme-toggle" class="sr-only peer">
-                            <div class="w-14 h-8 rounded-full bg-gray-300 dark:bg-zinc-600 peer-checked:bg-yellow-400 transition-colors"></div>
-                            <div class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform peer-checked:translate-x-6"></div>
+            <header class="mb-8">
+                <!-- Top Bar: User Info & Theme Toggle -->
+                <div class="flex justify-between items-center mb-4">
+                    <!-- User Info -->
+                    <div class="text-left">
+                        <p class="text-sm text-secondary">Вы вошли как:</p>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p id="user-email" class="font-semibold header-title break-all"></p>
+                            <button id="global-history-btn" class="hidden text-sm bg-yellow-400 text-zinc-800 hover:bg-yellow-500 font-semibold px-3 py-1 rounded-md transition">Общая история</button>
                         </div>
-                    </label>
+                        <button id="logout-btn" class="text-sm text-red-500 hover:underline mt-1">Выйти</button>
+                    </div>
+                    <!-- Theme Toggle -->
+                    <div>
+                        <button id="theme-toggle-btn" title="Переключить тему" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 dark:bg-zinc-700 text-gray-800 dark:text-gray-200 transition">
+                            <!-- Sun Icon -->
+                            <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-15.66l-.707.707M4.04 19.96l-.707.707M21 12h-1M4 12H3m16.96-7.96l-.707-.707M4.04 4.04l-.707-.707" />
+                            </svg>
+                            <!-- Moon Icon -->
+                            <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Main Title -->
+                <div class="text-center">
+                    <h1 class="text-3xl sm:text-4xl font-bold header-title">Материалы рулонной этикетки</h1>
                 </div>
             </header>
 
@@ -544,23 +553,31 @@
 
         
             // Theme toggle listener
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('change', () => {
-                if (themeToggle.checked) {
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
                 } else {
                     document.documentElement.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
                 }
-            });
-            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                themeToggle.checked = true;
-                document.documentElement.classList.add('dark');
-            } else {
-                themeToggle.checked = false;
-                document.documentElement.classList.remove('dark');
             }
+
+            themeToggleBtn.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const newTheme = isDarkMode ? 'light' : 'dark';
+                localStorage.setItem('theme', newTheme);
+                applyTheme(newTheme);
+            });
+            
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
         }
 
         // --- Firebase Data Functions ---
@@ -781,8 +798,32 @@
                     return;
                 }
 
-                snapshot.forEach(doc => {
+                const materialNamesCache = new Map();
+
+                for (const doc of snapshot.docs) {
                     const entry = doc.data();
+                    let materialDisplayName = 'Неизвестный материал';
+
+                    if (entry.materialName) {
+                        materialDisplayName = `${entry.materialName} ${entry.materialWidth ? `(${entry.materialWidth} мм)` : ''}`;
+                    } else {
+                        const materialDocRef = doc.ref.parent.parent;
+                        if (materialDocRef) {
+                            if (materialNamesCache.has(materialDocRef.id)) {
+                                materialDisplayName = materialNamesCache.get(materialDocRef.id);
+                            } else {
+                                try {
+                                    const materialDocSnap = await getDoc(materialDocRef);
+                                    if (materialDocSnap.exists()) {
+                                        const materialData = materialDocSnap.data();
+                                        materialDisplayName = `${materialData.name} ${materialData.width ? `(${materialData.width} мм)` : ''}`;
+                                        materialNamesCache.set(materialDocRef.id, materialDisplayName);
+                                    }
+                                } catch (e) { console.error("Could not fetch parent material:", e); }
+                            }
+                        }
+                    }
+                    
                     const logItem = document.createElement('div');
                     logItem.className = 'p-3 rounded-lg';
                     const isAdd = entry.type === 'add';
@@ -792,9 +833,9 @@
                     const changeText = isAdd ? `+${entry.change}` : `${entry.change}`;
                     const changeColor = isAdd ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
                     const typeText = isAdd ? 'Приход' : 'Списание';
-                    const materialDisplayName = `${entry.materialName} ${entry.materialWidth ? `(${entry.materialWidth} мм)` : ''}`;
                     const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : '';
-                    const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : '';
+                    const userDisplay = entry.user || 'Неизвестно';
+                    const userHtml = `<p class="text-xs text-secondary mt-1">Пользователь: ${userDisplay}</p>`;
 
                     logItem.innerHTML = `
                         <div class="flex justify-between items-start flex-wrap">
@@ -812,7 +853,7 @@
                         </div>
                     `;
                     container.appendChild(logItem);
-                });
+                }
             } catch (error) {
                  handleFirebaseError(error, 'загрузке общей истории');
             }
