@@ -152,7 +152,6 @@
                 </div>
             </header>
 
-            <!-- ... (rest of the app HTML is the same) ... -->
             <div class="card p-6 rounded-2xl mb-8">
                 <h2 class="text-2xl font-semibold mb-4 header-title">Добавить материал</h2>
                 <form id="add-material-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
@@ -254,7 +253,7 @@
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, updateDoc, deleteDoc, writeBatch, getDocs, runTransaction, query, orderBy, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        // ... (The rest of the JS code needs to be updated for auth) ...
+        // --- Global State & Constants ---
         let db, auth, currentUser;
         let materialsCollectionRef;
         let unsubscribe;
@@ -265,14 +264,18 @@
         const nomenclatureMap = { 'Бумажная полуглянцевая': 'semi gloss paper am/aw01/yellow glassine(fz)', 'Белая полимерная': '60# pp pearl film(tc)/acrylic w05/white glassine', 'Прозрачный хрусталь': '50# transparent pp film(tc)/acrylic 32/30# pet liner', 'Императорский синий': 'BeautyStick(1-15)Blue', 'Императорский красный': 'BeautyStick(01-15)Silver', 'Императорское золото': 'BeautyStick(1-15)Gold', 'Императорское серебро': 'BeautyStick(1-15)Red', 'Глянцевое серебро': 'Bright Silver PP 50um/AS500/white glassine', 'Голографическое серебро': '50PP TRANSPARENT AS500WG60 125г/м2+MPET12 мкм WP-02 Радуга', 'Прозрачный сахар': 'Glitter Transparent LamiFilm(05-90)GT-LT85-30P', };
         const materialNameSuggestions = { 'Утвержденная самоклейка': ['Бумажная полуглянцевая', 'Белая полимерная', 'Прозрачный хрусталь', 'Императорский синий', 'Императорский красный', 'Императорское золото', 'Императорское серебро', 'Глянцевое серебро', 'Голографическое серебро', 'Прозрачный сахар'], 'Самоклейка тест': ['Бумажная - белая термобумага', 'Бумажная - полуглянцевая', 'Бумажная - белая винная', 'Бумажная - белая матовая', 'Бумажная - белая термобумага морозостойкая', 'Бумажная - белая полуглянцевая бумага', 'Бумажная - серебряная глянцевая бумага', 'Бумажная - серебряная матовая бумага', 'Бумажная - китайская полуглянцевая бумага', 'Полимерная - белая', 'Полимерная - мутная прозрачка', 'Полимерная - супер прозрачная', 'Полимерная - прозрачная', 'Полимерная - серебряная глянцевая', 'Полимерная - белая мутная', 'Полимерная - тонкая прозрачная', 'Другие - прозрачный ПВХ'], 'Не утвержденная самоклейка': ['Голографическая радуга', 'Черная самоклейка с тач покрытием', 'Мутная прозрачка (Pe85)', 'Винная бумага (Antarctic white от Стиктрейд)'], 'Фольга ДжетТач': [], 'Фольга DMS': ['Фольга золото ППФ', 'Фольга серебро ППФ', 'Фольга голография ППФ', 'Фольга зеленая ППФ', 'Фольга голография ДубльВ', 'Фольга золото ДубльВ', 'Фольга серебро ДубльВ'], 'Краска': ['GIP White', 'GIP Cyan', 'GIP Magenta', 'GIP Yellow', 'GIP Key'], 'Жидкие расходники': ['Антифриз Felix G12', 'Вода дистиллированная Oilright', 'Антифриз Prestone (для GIP)', 'Wash (для GIP)', 'Лак DMS SJ-SM01', 'Этилацетат (для мойки)', 'Метоксипропанол (УФ смывка)', 'Изопропиловый спирт (для мойки)', 'Platenclene (Очиститель валов)', 'Матовый лак VMG UV Flexo', 'Матовый лак Танзор Графилак UV 903', 'Праймер Танзор Графилак UV 368', 'Праймер Артмарк BUF-6301D-4', 'Wash DMS SJ-QX01', 'Водный раствор аммиака ЧДА'] };
         const initialDataRaw = [ { name: "Антифриз Felix G12", quantity: 20, unit: "кг", category: "Жидкие расходники" },{ name: "Вода дистиллированная Oilright", quantity: 10, unit: "л", category: "Жидкие расходники" },{ name: "Антифриз Prestone (для GIP)", quantity: 7.56, unit: "л", category: "Жидкие расходники" },{ name: "Wash (для GIP)", quantity: 52, unit: "л", category: "Жидкие расходники" }, { name: "GIP White", quantity: 96.8, unit: "л", category: "Краска" }, { name: "GIP Cyan", quantity: 63.5, unit: "л", category: "Краска" }, { name: "GIP Magenta", quantity: 62.5, unit: "л", category: "Краска" }, { name: "GIP Yellow", quantity: 64.3, unit: "л", category: "Краска" }, { name: "GIP Key", quantity: 63.2, unit: "л", category: "Краска" }, { name: "Лак DMS SJ-SM01", quantity: 70.5, unit: "л", category: "Жидкие расходники" },{ name: "Этилацетат (для мойки)", quantity: 35, unit: "л", category: "Жидкие расходники" },{ name: "Метоксипропанол (УФ смывка)", quantity: 16, unit: "кг", category: "Жидкие расходники" },{ name: "Изопропиловый спирт (для мойки)", quantity: 20, unit: "л", category: "Жидкие расходники" },{ name: "Platenclene (Очиститель валов)", quantity: 0.7, unit: "л", category: "Жидкие расходники" },{ name: "Матовый лак VMG UV Flexo", quantity: 37, unit: "кг", category: "Жидкие расходники" },{ name: "Матовый лак Танзор Графилак UV 903", quantity: 9, unit: "кг", category: "Жидкие расходники" },{ name: "Праймер Танзор Графилак UV 368", quantity: 4.5, unit: "кг", category: "Жидкие расходники" },{ name: "Праймер Артмарк BUF-6301D-4", quantity: 17.5, unit: "кг", category: "Жидкие расходники" },{ name: "Wash DMS SJ-QX01", quantity: 1, unit: "л", category: "Жидкие расходники" },{ name: "Водный раствор аммиака ЧДА", quantity: 9, unit: "кг", category: "Жидкие расходники" },{ name: "Бумажная полуглянцевая 330 мм", quantity: 43956, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Белая полимерная 330 мм", quantity: 7992, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный хрусталь 330 мм", quantity: 15000, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный хрусталь 280 мм", quantity: 9280, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорский синий 330 мм", quantity: 11050, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорский красный 330 мм", quantity: 11380, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское золото 330 мм", quantity: 7250, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское золото 270 мм", quantity: 4000, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское серебро 330 мм", quantity: 10950, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Глянцевое серебро 210 мм", quantity: 17700, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Глянцевое серебро 330 мм", quantity: 76500, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 330 мм", quantity: 5578, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 214 мм", quantity: 6140, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 150 мм", quantity: 6140, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный сахар 330 мм", quantity: 5450, unit: "м/п", category: "Утвержденная самоклейка" }, { name: "Фольга золото ППФ 330 мм", quantity: 4900, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ППФ 330 мм", quantity: 4900, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга голография ППФ 330 мм", quantity: 440, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга зеленая ППФ 330 мм", quantity: 450, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга голография ДубльВ 330 мм", quantity: 1500, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 330 мм", quantity: 500, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 330 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 100 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 130 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 150 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 160 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 210 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 130 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 150 мм", quantity: 5000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 160 мм", quantity: 11000, unit: "м/п", category: "Фольга DMS" }, { name: "Бумажная - белая термобумага 210 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 250 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 290 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 280 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая винная 300 мм", quantity: 30, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 225 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 255 мм", quantity: 370, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая матовая 210 мм", quantity: 138, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 251 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага морозостойкая 270 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая матовая 250 мм", quantity: 48, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая полуглянцевая бумага 320 мм", quantity: 490, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая полуглянцевая бумага 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая винная 140 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - серебряная глянцевая бумага 320 мм", quantity: 400, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - серебряная матовая бумага 320 мм", quantity: 390, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - китайская полуглянцевая бумага 330 мм", quantity: 500, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 305 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 320 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - супер прозрачная 290 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - супер прозрачная 250 мм", quantity: 60, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 330 мм", quantity: 230, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 170 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 330 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 300 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 280 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 230 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 265 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - серебряная глянцевая 330 мм", quantity: 40, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 330 мм", quantity: 350, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 295 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 250 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачная 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 330 мм", quantity: 400, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая мутная 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - тонкая прозрачная 330 мм", quantity: 800, unit: "м/п", category: "Самоклейка тест" }, { name: "Другие - прозрачный ПВХ 240 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Голографическая радуга 330 мм", quantity: 11910, unit: "м/п", category: "Не утвержденная самоклейка", nomenclature: "50PP TRANSPARENT AS500WG60 125г/м2+UV TOP(01-18) IRIS T розово-зеленая" }, { name: "Черная самоклейка с тач покрытием 330 мм", quantity: 272, unit: "м/п", category: "Не утвержденная самоклейка" }, { name: "Мутная прозрачка (Pe85) 330 мм", quantity: 11589, unit: "м/п", category: "Не утвержденная самоклейка", nomenclature: "transparent pe film 85#/w05/white glassine" }, { name: "Винная бумага (Antarctic white от Стиктрейд) 330 мм", quantity: 100, unit: "м/п", category: "Не утвержденная самоклейка" }, ];
-        const initialData = processInitialData(initialDataRaw);
         
-        function processInitialData(data) { /* ... same as before ... */ return data.map(item => { const match = item.name.match(/(\s*\d+\s*мм)/); let newItem = { ...item, width: null, nomenclature: item.nomenclature || null }; if (match) { newItem.width = parseInt(match[1].trim(), 10); newItem.name = item.name.replace(match[0], '').trim(); } if (newItem.category === 'Утвержденная самоклейка' && nomenclatureMap[newItem.name]) { newItem.nomenclature = nomenclatureMap[newItem.name]; } return newItem; }); }
-
+        // --- Main App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+            } catch(e) {
+                console.error("Firebase initialization failed:", e);
+                document.body.innerHTML = '<h1>Ошибка инициализации Firebase. Проверьте объект firebaseConfig.</h1>';
+                return;
+            }
 
             onAuthStateChanged(auth, user => {
                 const authScreen = document.getElementById('auth-screen');
@@ -298,8 +301,42 @@
             handleCategoryChange();
         });
 
-        // --- AUTH FUNCTIONS ---
-        function setupAuthListeners() {
+        // --- Helper Functions ---
+        function processInitialData(data) {
+            return data.map(item => {
+                const match = item.name.match(/(\s*\d+\s*мм)/);
+                let newItem = { ...item, width: null, nomenclature: item.nomenclature || null };
+                if (match) {
+                    newItem.width = parseInt(match[1].trim(), 10);
+                    newItem.name = item.name.replace(match[0], '').trim();
+                }
+                if (newItem.category === 'Утвержденная самоклейка' && nomenclatureMap[newItem.name]) {
+                    newItem.nomenclature = nomenclatureMap[newItem.name];
+                }
+                return newItem;
+            });
+        }
+        const initialData = processInitialData(initialDataRaw);
+
+        function handleFirebaseError(error, context) {
+            console.error(`Firebase Error in ${context}:`, error);
+            const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message');
+            const loadingMessage = document.getElementById('loading-message');
+            if(loadingMessage) loadingMessage.style.display = 'none';
+            if (error.code === 'auth/configuration-not-found') {
+                errorMessage.innerHTML = '<strong>Ошибка конфигурации:</strong> Email/Password вход не включен в вашем проекте Firebase. <br>Пожалуйста, перейдите в Firebase Console -> Authentication -> Sign-in method и включите провайдера "Email/Password".';
+            } else if (error.code === 'permission-denied') {
+                errorMessage.innerHTML = `<strong>Ошибка доступа:</strong> У вас нет прав для выполнения этого действия. Убедитесь, что ваши правила Firestore настроены правильно.`;
+            } else {
+                errorMessage.textContent = `Произошла ошибка при "${context}". Проверьте консоль.`;
+            }
+            errorContainer.classList.remove('hidden');
+        }
+
+        // --- Event Listeners Setup ---
+        function setupEventListeners() {
+            // Auth Listeners
             const loginForm = document.getElementById('login-form');
             const authError = document.getElementById('auth-error');
             loginForm.addEventListener('submit', async (e) => {
@@ -319,11 +356,173 @@
                 }
             });
 
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                await signOut(auth);
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth);
+            });
+
+            // Add Material Form
+            const addForm = document.getElementById('add-material-form');
+            addForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('material-name').value.trim();
+                const quantity = document.getElementById('material-quantity').value;
+                const unit = document.getElementById('material-unit').value;
+                const category = document.getElementById('material-category').value;
+                const width = document.getElementById('material-width').value;
+                const nomenclature = document.getElementById('material-nomenclature').value.trim();
+                if (name && quantity && unit && category) {
+                    addMaterial(name, quantity, unit, category, width || null, nomenclature || null);
+                    document.getElementById('material-name').value = '';
+                    document.getElementById('material-quantity').value = '';
+                    document.getElementById('material-width').value = '';
+                    document.getElementById('material-nomenclature').value = '';
+                    handleCategoryChange();
+                }
+            });
+            document.getElementById('material-category').addEventListener('change', handleCategoryChange);
+
+            // Material List Actions
+            document.getElementById('materials-list').addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+                if (target.classList.contains('sort-btn')) {
+                    sortConfig.category = target.dataset.category;
+                    sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+                    renderMaterials();
+                    return;
+                }
+                const materialId = target.dataset.id;
+                if (target.classList.contains('update-btn')) openUpdateModal(materialId, target.dataset.action);
+                if (target.classList.contains('delete-btn')) openDeleteConfirmModal(materialId);
+                if (target.classList.contains('history-btn')) openHistoryModal(materialId, target.dataset.name);
+            });
+
+            // Filters
+            document.getElementById('category-filters').addEventListener('click', (e) => {
+                const target = e.target.closest('button.filter-btn');
+                if (target) {
+                    currentFilter = target.dataset.category;
+                    document.querySelector('#category-filters .active-filter').classList.remove('active-filter');
+                    target.classList.add('active-filter');
+                    const showWidthSearch = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS', 'All'].includes(currentFilter);
+                    document.getElementById('width-search-container').classList.toggle('hidden', !showWidthSearch);
+                    document.getElementById('width-search-input').value = '';
+                    renderMaterials();
+                }
+            });
+            document.getElementById('name-search-input').addEventListener('input', renderMaterials);
+            document.getElementById('width-search-input').addEventListener('input', renderMaterials);
+            document.getElementById('width-search-reset').addEventListener('click', () => {
+                document.getElementById('width-search-input').value = '';
+                renderMaterials();
+            });
+
+            // Modal Listeners
+            document.getElementById('update-quantity-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('modal-material-id').value;
+                const action = document.getElementById('modal-action-type').value;
+                const changeValue = Number(document.getElementById('quantity-change').value);
+                const comment = document.getElementById('quantity-comment').value.trim();
+                if (id && changeValue > 0) {
+                    updateMaterialQuantity(id, action === 'add' ? changeValue : -changeValue, comment);
+                    closeUpdateModal();
+                }
+            });
+            document.getElementById('write-off-all-btn').addEventListener('click', () => {
+                const id = document.getElementById('modal-material-id').value;
+                const material = allMaterials.find(m => m.id === id);
+                const comment = document.getElementById('quantity-comment').value.trim() || 'Списание всех остатков';
+                if (material) {
+                    updateMaterialQuantity(id, -material.quantity, comment);
+                    closeUpdateModal();
+                }
+            });
+            document.getElementById('cancel-update').addEventListener('click', closeUpdateModal);
+            document.querySelector('#update-modal .modal-backdrop').addEventListener('click', closeUpdateModal);
+            document.getElementById('confirm-delete').addEventListener('click', () => {
+                const materialId = document.getElementById('confirm-delete').dataset.id;
+                if(materialId) {
+                    deleteMaterial(materialId);
+                    closeDeleteConfirmModal();
+                }
+            });
+            document.getElementById('cancel-delete').addEventListener('click', closeDeleteConfirmModal);
+            document.querySelector('#delete-confirm-modal .modal-backdrop').addEventListener('click', closeDeleteConfirmModal);
+            document.getElementById('close-history-modal').addEventListener('click', closeHistoryModal);
+            document.querySelector('#history-modal .modal-backdrop').addEventListener('click', closeHistoryModal);
+        
+            // Theme toggle listener
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('change', () => {
+                if (themeToggle.checked) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                themeToggle.checked = true;
+                document.documentElement.classList.add('dark');
+            } else {
+                themeToggle.checked = false;
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // --- Firebase Data Functions ---
+        async function checkAndAddInitialData() {
+             try {
+                const snapshot = await getDocs(materialsCollectionRef);
+                if (snapshot.empty) {
+                    const batch = writeBatch(db);
+                    initialData.forEach(material => {
+                        const docRef = doc(materialsCollectionRef);
+                        batch.set(docRef, { ...material, createdAt: new Date() });
+                    });
+                    await batch.commit();
+                }
+            } catch (error) {
+                handleFirebaseError(error, 'проверке и добавлении начальных данных');
+            }
+        }
+        function listenForMaterials() {
+            if (unsubscribe) unsubscribe();
+            const q = query(materialsCollectionRef);
+            unsubscribe = onSnapshot(q, (snapshot) => {
+                document.getElementById('error-container').classList.add('hidden');
+                allMaterials = [];
+                snapshot.forEach((doc) => {
+                    allMaterials.push({ id: doc.id, ...doc.data() });
+                });
+                renderMaterials();
+            }, (error) => {
+                handleFirebaseError(error, 'получении данных в реальном времени');
             });
         }
-        
+        async function addMaterial(name, quantity, unit, category, width, nomenclature) {
+            try {
+                const materialWidth = width ? Number(width) : null;
+                const q = query( materialsCollectionRef, where("name", "==", name), where("category", "==", category), where("width", "==", materialWidth) );
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const existingDoc = querySnapshot.docs[0];
+                    await updateMaterialQuantity(existingDoc.id, Number(quantity), 'Приход');
+                } else {
+                    const newMaterialRef = doc(materialsCollectionRef);
+                    const historyRef = collection(newMaterialRef, 'history');
+                    const batch = writeBatch(db);
+                    const materialData = { name, quantity: Number(quantity), unit, category, createdAt: new Date(), width: materialWidth, nomenclature: nomenclature || null };
+                    batch.set(newMaterialRef, materialData);
+                    batch.set(doc(historyRef), { change: Number(quantity), newQuantity: Number(quantity), type: 'add', timestamp: new Date(), user: currentUser.email, comment: 'Первоначальное добавление' });
+                    await batch.commit();
+                }
+            } catch (error) {
+                 handleFirebaseError(error, 'добавлении материала');
+            }
+        }
         async function updateMaterialQuantity(id, quantityChange, comment = '') {
             const materialRef = doc(materialsCollectionRef, id);
             const historyRef = collection(materialRef, 'history');
@@ -334,68 +533,130 @@
                     const currentQuantity = materialDoc.data().quantity;
                     const newQuantity = currentQuantity + quantityChange;
                     if (newQuantity < 0) { return; }
-                    
                     transaction.update(materialRef, { quantity: newQuantity });
-                    
                     const historyDocRef = doc(historyRef);
                     transaction.set(historyDocRef, {
                         change: quantityChange,
                         newQuantity: newQuantity,
                         type: quantityChange > 0 ? 'add' : 'subtract',
                         timestamp: new Date(),
-                        user: currentUser ? currentUser.email : 'Unknown', // <-- Track user
+                        user: currentUser ? currentUser.email : 'Unknown',
                         comment: comment
                     });
                 });
             } catch (error) {
-                 handleFirebaseError(error, 'обновлении количества');
+                handleFirebaseError(error, 'обновлении количества');
             }
         }
-        
-        async function openHistoryModal(id, name) {
-            // ... (previous code)
-            // Inside the loop that creates the history log item:
-             const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : '';
-             logItem.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <p class="font-semibold header-title">${typeText}</p>
-                                <p class="text-sm text-secondary">${date}</p>
-                                ${commentHtml}
-                                ${userHtml}
-                            </div>
-                            <div class="text-right flex-shrink-0 ml-4">
-                               <p class="font-bold text-lg ${changeColor}">${changeText}</p>
-                               <p class="text-sm text-secondary">Остаток: ${entry.newQuantity}</p>
-                            </div>
-                        </div>
-                    `;
-            // ... (rest of the function)
+        async function deleteMaterial(id) {
+            try {
+                await deleteDoc(doc(materialsCollectionRef, id));
+            } catch (error) {
+                handleFirebaseError(error, 'удалении материала');
+            }
         }
-        
-        // --- Make sure to call the new auth setup function ---
-        function setupEventListeners() {
-            setupAuthListeners(); // <-- Call the new function
-            // ... (rest of the existing event listeners)
-            const addForm = document.getElementById('add-material-form'); addForm.addEventListener('submit', (e) => { e.preventDefault(); const name = document.getElementById('material-name').value.trim(); const quantity = document.getElementById('material-quantity').value; const unit = document.getElementById('material-unit').value; const category = document.getElementById('material-category').value; const width = document.getElementById('material-width').value; const nomenclature = document.getElementById('material-nomenclature').value.trim(); if (name && quantity && unit && category) { addMaterial(name, quantity, unit, category, width || null, nomenclature || null); document.getElementById('material-name').value = ''; document.getElementById('material-quantity').value = ''; document.getElementById('material-width').value = ''; document.getElementById('material-nomenclature').value = ''; handleCategoryChange(); } }); document.getElementById('material-category').addEventListener('change', handleCategoryChange); document.getElementById('materials-list').addEventListener('click', (e) => { const target = e.target.closest('button'); if (!target) return; if (target.classList.contains('sort-btn')) { sortConfig.category = target.dataset.category; sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc'; renderMaterials(); return; } const materialId = target.dataset.id; if (target.classList.contains('update-btn')) openUpdateModal(materialId, target.dataset.action); if (target.classList.contains('delete-btn')) openDeleteConfirmModal(materialId); if (target.classList.contains('history-btn')) openHistoryModal(materialId, target.dataset.name); }); document.getElementById('category-filters').addEventListener('click', (e) => { const target = e.target.closest('button.filter-btn'); if (target) { currentFilter = target.dataset.category; document.querySelector('#category-filters .active-filter').classList.remove('active-filter'); target.classList.add('active-filter'); const showWidthSearch = currentFilter === 'Утвержденная самоклейка' || currentFilter === 'Самоклейка тест' || currentFilter === 'Не утвержденная самоклейка' || currentFilter === 'Фольга ДжетТач' || currentFilter === 'Фольга DMS' || currentFilter === 'All'; document.getElementById('width-search-container').classList.toggle('hidden', !showWidthSearch); document.getElementById('width-search-input').value = ''; renderMaterials(); } }); document.getElementById('name-search-input').addEventListener('input', renderMaterials); document.getElementById('width-search-input').addEventListener('input', renderMaterials); document.getElementById('width-search-reset').addEventListener('click', () => { document.getElementById('width-search-input').value = ''; renderMaterials(); }); document.getElementById('update-quantity-form').addEventListener('submit', (e) => { e.preventDefault(); const id = document.getElementById('modal-material-id').value; const action = document.getElementById('modal-action-type').value; const changeValue = Number(document.getElementById('quantity-change').value); const comment = document.getElementById('quantity-comment').value.trim(); if (id && changeValue > 0) { updateMaterialQuantity(id, action === 'add' ? changeValue : -changeValue, comment); closeUpdateModal(); } }); document.getElementById('write-off-all-btn').addEventListener('click', () => { const id = document.getElementById('modal-material-id').value; const material = allMaterials.find(m => m.id === id); const comment = document.getElementById('quantity-comment').value.trim() || 'Списание всех остатков'; if (material) { updateMaterialQuantity(id, -material.quantity, comment); closeUpdateModal(); } }); document.getElementById('cancel-update').addEventListener('click', closeUpdateModal); document.querySelector('#update-modal .modal-backdrop').addEventListener('click', closeUpdateModal); document.getElementById('confirm-delete').addEventListener('click', () => { const materialId = document.getElementById('confirm-delete').dataset.id; if(materialId) { deleteMaterial(materialId); closeDeleteConfirmModal(); } }); document.getElementById('cancel-delete').addEventListener('click', closeDeleteConfirmModal); document.querySelector('#delete-confirm-modal .modal-backdrop').addEventListener('click', closeDeleteConfirmModal); document.getElementById('close-history-modal').addEventListener('click', closeHistoryModal); document.querySelector('#history-modal .modal-backdrop').addEventListener('click', closeHistoryModal); const themeToggle = document.getElementById('theme-toggle'); themeToggle.addEventListener('change', () => { if (themeToggle.checked) { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); } else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); } }); if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { themeToggle.checked = true; document.documentElement.classList.add('dark'); } else { themeToggle.checked = false; document.documentElement.classList.remove('dark'); }
+
+        // --- UI Rendering & Modal Functions ---
+        function renderMaterials() {
+            const listElement = document.getElementById('materials-list');
+            const loadingMessage = document.getElementById('loading-message');
+            const widthSearchInput = document.getElementById('width-search-input');
+            const nameSearchInput = document.getElementById('name-search-input');
+            let materialsToRender = currentFilter === 'All' ? allMaterials : allMaterials.filter(m => m.category === currentFilter);
+            const nameSearchTerm = nameSearchInput.value.toLowerCase().trim();
+            if (nameSearchTerm) {
+                materialsToRender = materialsToRender.filter(m => m.name.toLowerCase().includes(nameSearchTerm) || (m.nomenclature && m.nomenclature.toLowerCase().includes(nameSearchTerm)) );
+            }
+            const searchWidth = widthSearchInput.value;
+            if (searchWidth) {
+                 materialsToRender = materialsToRender.filter(m => m.width === Number(searchWidth));
+            }
+            listElement.innerHTML = '';
+            if (document.getElementById('error-container').classList.contains('hidden')) {
+                loadingMessage.style.display = materialsToRender.length === 0 ? 'block' : 'none';
+                loadingMessage.textContent = 'Материалы не найдены.';
+            }
+            const groupedByCategory = materialsToRender.reduce((acc, material) => {
+                const category = material.category || 'Другое';
+                if (!acc[category]) acc[category] = [];
+                acc[category].push(material);
+                return acc;
+            }, {});
+            Object.keys(groupedByCategory).sort().forEach(category => {
+                const categoryHeaderContainer = document.createElement('div');
+                categoryHeaderContainer.className = 'category-header-container';
+                if (category === 'Утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-approved'); }
+                else if (category === 'Не утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-unapproved'); }
+                categoryHeaderContainer.innerHTML = `<h3 class="text-xl font-bold category-header">${category}</h3>`;
+                if (['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка'].includes(category)) {
+                    const sortButton = document.createElement('button');
+                    sortButton.className = 'sort-btn';
+                    sortButton.dataset.category = category;
+                    sortButton.innerHTML = `Ширина ${sortConfig.direction === 'asc' ? '▲' : '▼'}`;
+                    categoryHeaderContainer.appendChild(sortButton);
+                }
+                const categoryContainer = document.createElement('div');
+                categoryContainer.appendChild(categoryHeaderContainer);
+                const itemsContainer = document.createElement('div');
+                itemsContainer.className = 'space-y-3';
+                const sortedItems = groupedByCategory[category].sort((a, b) => {
+                    if (['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка'].includes(category)) {
+                        return sortConfig.direction === 'asc' ? (a.width || 0) - (b.width || 0) : (b.width || 0) - (a.width || 0);
+                    }
+                    return a.name.localeCompare(b.name);
+                });
+                sortedItems.forEach(material => {
+                    const card = document.createElement('div');
+                    card.className = 'card p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
+                    const quantityColor = material.quantity < 100 ? 'text-red-500' : 'text-green-600';
+                    card.innerHTML = ` <div class="flex-grow"> <div class="flex items-baseline gap-3 flex-wrap"> <h4 class="text-lg font-bold header-title">${material.name}</h4> ${material.width ? `<p class="text-base font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full">${material.width} мм</p>` : ''} </div> ${material.nomenclature ? `<p class="text-xs text-secondary mt-1">${material.nomenclature}</p>` : ''} <p class="text-sm text-secondary mt-2">Остаток:</p> <p class="text-2xl font-bold ${quantityColor}">${material.quantity} <span class="text-base font-normal">${material.unit}</span></p> </div> <div class="flex items-center gap-2 w-full sm:w-auto"> <button data-id="${material.id}" data-action="add" class="update-btn flex-1 sm:flex-none w-10 h-10 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/50 dark:text-green-400 rounded-full flex items-center justify-center text-2xl font-bold transition">+</button> <button data-id="${material.id}" data-action="subtract" class="update-btn flex-1 sm:flex-none w-10 h-10 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 dark:text-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold transition">-</button> <button data-id="${material.id}" data-name="${material.name}" class="history-btn flex-1 sm:flex-none w-10 h-10 text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 dark:text-blue-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button> <button data-id="${material.id}" class="delete-btn flex-1 sm:flex-none w-10 h-10 text-red-700 hover:bg-red-100 dark:hover:bg-red-900/50 dark:text-red-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button> </div>`;
+                    itemsContainer.appendChild(card);
+                });
+                categoryContainer.appendChild(itemsContainer);
+                listElement.appendChild(categoryContainer);
+            });
         }
-        
-        // --- (All other JS functions remain mostly the same) ---
-        // handleFirebaseError, checkAndAddInitialData, listenForMaterials, addMaterial, deleteMaterial, renderMaterials, handleCategoryChange, open/close modals, etc.
-        function handleFirebaseError(error, context) { console.error(`Firebase Error in ${context}:`, error); const errorContainer = document.getElementById('error-container'); const errorMessage = document.getElementById('error-message'); const loadingMessage = document.getElementById('loading-message'); loadingMessage.style.display = 'none'; if (error.code === 'auth/configuration-not-found') { errorMessage.innerHTML = '<strong>Ошибка конфигурации:</strong> Email/Password вход не включен в вашем проекте Firebase. <br>Пожалуйста, перейдите в Firebase Console -> Authentication -> Sign-in method и включите провайдера "Email/Password".'; } else if (error.code === 'permission-denied') { errorMessage.innerHTML = `<strong>Ошибка доступа:</strong> У вас нет прав для выполнения этого действия. Убедитесь, что ваши правила Firestore настроены правильно.`; } else { errorMessage.textContent = `Произошла ошибка при "${context}". Проверьте консоль.`; } errorContainer.classList.remove('hidden'); }
-        async function checkAndAddInitialData() { try { const snapshot = await getDocs(materialsCollectionRef); if (snapshot.empty) { const batch = writeBatch(db); initialData.forEach(material => { const docRef = doc(materialsCollectionRef); batch.set(docRef, { ...material, createdAt: new Date() }); }); await batch.commit(); } } catch (error) { handleFirebaseError(error, 'проверке и добавлении начальных данных'); } }
-        function listenForMaterials() { if (unsubscribe) unsubscribe(); const q = query(materialsCollectionRef); unsubscribe = onSnapshot(q, (snapshot) => { document.getElementById('error-container').classList.add('hidden'); allMaterials = []; snapshot.forEach((doc) => { allMaterials.push({ id: doc.id, ...doc.data() }); }); renderMaterials(); }, (error) => { handleFirebaseError(error, 'получении данных в реальном времени'); }); }
-        async function addMaterial(name, quantity, unit, category, width, nomenclature) { try { const materialWidth = width ? Number(width) : null; const q = query( materialsCollectionRef, where("name", "==", name), where("category", "==", category), where("width", "==", materialWidth) ); const querySnapshot = await getDocs(q); if (!querySnapshot.empty) { const existingDoc = querySnapshot.docs[0]; await updateMaterialQuantity(existingDoc.id, Number(quantity), 'Приход'); } else { const newMaterialRef = doc(materialsCollectionRef); const historyRef = collection(newMaterialRef, 'history'); const batch = writeBatch(db); const materialData = { name, quantity: Number(quantity), unit, category, createdAt: new Date(), width: materialWidth, nomenclature: nomenclature || null }; batch.set(newMaterialRef, materialData); batch.set(doc(historyRef), { change: Number(quantity), newQuantity: Number(quantity), type: 'add', timestamp: new Date(), user: currentUser.email, comment: 'Первоначальное добавление' }); await batch.commit(); } } catch (error) { handleFirebaseError(error, 'добавлении материала'); } }
-        async function deleteMaterial(id) { try { await deleteDoc(doc(materialsCollectionRef, id)); } catch (error) { handleFirebaseError(error, 'удалении материала'); } }
-        function renderMaterials() { const listElement = document.getElementById('materials-list'); const loadingMessage = document.getElementById('loading-message'); const widthSearchInput = document.getElementById('width-search-input'); const nameSearchInput = document.getElementById('name-search-input'); let materialsToRender = currentFilter === 'All' ? allMaterials : allMaterials.filter(m => m.category === currentFilter); const nameSearchTerm = nameSearchInput.value.toLowerCase().trim(); if (nameSearchTerm) { materialsToRender = materialsToRender.filter(m => m.name.toLowerCase().includes(nameSearchTerm) || (m.nomenclature && m.nomenclature.toLowerCase().includes(nameSearchTerm)) ); } const searchWidth = widthSearchInput.value; if (searchWidth) { materialsToRender = materialsToRender.filter(m => m.width === Number(searchWidth)); } listElement.innerHTML = ''; if (document.getElementById('error-container').classList.contains('hidden')) { loadingMessage.style.display = materialsToRender.length === 0 ? 'block' : 'none'; loadingMessage.textContent = 'Материалы не найдены.'; } const groupedByCategory = materialsToRender.reduce((acc, material) => { const category = material.category || 'Другое'; if (!acc[category]) acc[category] = []; acc[category].push(material); return acc; }, {}); Object.keys(groupedByCategory).sort().forEach(category => { const categoryHeaderContainer = document.createElement('div'); categoryHeaderContainer.className = 'category-header-container'; if (category === 'Утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-approved'); } else if (category === 'Не утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-unapproved'); } categoryHeaderContainer.innerHTML = `<h3 class="text-xl font-bold category-header">${category}</h3>`; if (category === 'Утвержденная самоклейка' || category === 'Самоклейка тест' || category === 'Не утвержденная самоклейка') { const sortButton = document.createElement('button'); sortButton.className = 'sort-btn'; sortButton.dataset.category = category; sortButton.innerHTML = `Ширина ${sortConfig.direction === 'asc' ? '▲' : '▼'}`; categoryHeaderContainer.appendChild(sortButton); } const categoryContainer = document.createElement('div'); categoryContainer.appendChild(categoryHeaderContainer); const itemsContainer = document.createElement('div'); itemsContainer.className = 'space-y-3'; const sortedItems = groupedByCategory[category].sort((a, b) => { if (category === 'Утвержденная самоклейка' || category === 'Самоклейка тест' || category === 'Не утвержденная самоклейка') { return sortConfig.direction === 'asc' ? (a.width || 0) - (b.width || 0) : (b.width || 0) - (a.width || 0); } return a.name.localeCompare(b.name); }); sortedItems.forEach(material => { const card = document.createElement('div'); card.className = 'card p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'; const quantityColor = material.quantity < 100 ? 'text-red-500' : 'text-green-600'; card.innerHTML = ` <div class="flex-grow"> <div class="flex items-baseline gap-3 flex-wrap"> <h4 class="text-lg font-bold header-title">${material.name}</h4> ${material.width ? `<p class="text-base font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full">${material.width} мм</p>` : ''} </div> ${material.nomenclature ? `<p class="text-xs text-secondary mt-1">${material.nomenclature}</p>` : ''} <p class="text-sm text-secondary mt-2">Остаток:</p> <p class="text-2xl font-bold ${quantityColor}">${material.quantity} <span class="text-base font-normal">${material.unit}</span></p> </div> <div class="flex items-center gap-2 w-full sm:w-auto"> <button data-id="${material.id}" data-action="add" class="update-btn flex-1 sm:flex-none w-10 h-10 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/50 dark:text-green-400 rounded-full flex items-center justify-center text-2xl font-bold transition">+</button> <button data-id="${material.id}" data-action="subtract" class="update-btn flex-1 sm:flex-none w-10 h-10 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 dark:text-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold transition">-</button> <button data-id="${material.id}" data-name="${material.name}" class="history-btn flex-1 sm:flex-none w-10 h-10 text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 dark:text-blue-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button> <button data-id="${material.id}" class="delete-btn flex-1 sm:flex-none w-10 h-10 text-red-700 hover:bg-red-100 dark:hover:bg-red-900/50 dark:text-red-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button> </div>`; itemsContainer.appendChild(card); }); categoryContainer.appendChild(itemsContainer); listElement.appendChild(categoryContainer); }); }
         function handleCategoryChange() { const categorySelect = document.getElementById('material-category'); const widthContainer = document.getElementById('material-width-container'); const nameDatalist = document.getElementById('material-names-list'); const nameInput = document.getElementById('material-name'); const selectedCategory = categorySelect.value; const categoriesWithWidth = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS']; widthContainer.classList.toggle('hidden', !categoriesWithWidth.includes(selectedCategory)); nameDatalist.innerHTML = ''; nameInput.value = ''; if (materialNameSuggestions[selectedCategory]) { materialNameSuggestions[selectedCategory].forEach(name => { const option = document.createElement('option'); option.value = name; nameDatalist.appendChild(option); }); } }
         function openUpdateModal(id, action) { const modal = document.getElementById('update-modal'); const writeOffBtn = document.getElementById('write-off-all-btn'); document.getElementById('modal-material-id').value = id; document.getElementById('modal-action-type').value = action; document.getElementById('update-quantity-form').reset(); document.getElementById('modal-title').textContent = action === 'add' ? 'Приход материала' : 'Списание материала'; if (action === 'subtract') { writeOffBtn.classList.remove('hidden'); } else { writeOffBtn.classList.add('hidden'); } modal.style.display = 'flex'; }
         function closeUpdateModal() { document.getElementById('update-modal').style.display = 'none'; }
         function openDeleteConfirmModal(id) { const modal = document.getElementById('delete-confirm-modal'); document.getElementById('confirm-delete').dataset.id = id; modal.style.display = 'flex'; }
         function closeDeleteConfirmModal() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
-        async function openHistoryModal(id, name) { const modal = document.getElementById('history-modal'); const title = document.getElementById('history-modal-title'); const container = document.getElementById('history-log-container'); title.textContent = `История: ${name}`; container.innerHTML = '<p class="text-secondary">Загрузка истории...</p>'; modal.style.display = 'flex'; try { const historyRef = collection(materialsCollectionRef, id, 'history'); const q = query(historyRef, orderBy('timestamp', 'desc')); const snapshot = await getDocs(q); container.innerHTML = ''; if (snapshot.empty) { container.innerHTML = '<p class="text-secondary">История операций пуста.</p>'; return; } snapshot.forEach(doc => { const entry = doc.data(); const logItem = document.createElement('div'); logItem.className = 'p-3 rounded-lg'; const isAdd = entry.type === 'add'; logItem.classList.add(isAdd ? 'history-item-add' : 'history-item-subtract'); const date = entry.timestamp.toDate().toLocaleString('ru-RU'); const changeText = isAdd ? `+${entry.change}` : `${entry.change}`; const changeColor = isAdd ? 'text-green-700' : 'text-red-700'; const typeText = isAdd ? 'Приход' : 'Списание'; const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : ''; const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : ''; logItem.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-semibold header-title">${typeText}</p> <p class="text-sm text-secondary">${date}</p> ${commentHtml} ${userHtml} </div> <div class="text-right flex-shrink-0 ml-4"> <p class="font-bold text-lg ${changeColor}">${changeText}</p> <p class="text-sm text-secondary">Остаток: ${entry.newQuantity}</p> </div> </div> `; container.appendChild(logItem); }); } catch (error) { handleFirebaseError(error, 'загрузке истории'); } }
+        async function openHistoryModal(id, name) {
+            const modal = document.getElementById('history-modal');
+            const title = document.getElementById('history-modal-title');
+            const container = document.getElementById('history-log-container');
+            title.textContent = `История: ${name}`;
+            container.innerHTML = '<p class="text-secondary">Загрузка истории...</p>';
+            modal.style.display = 'flex';
+            try {
+                const historyRef = collection(db, `materials/${id}/history`);
+                const q = query(historyRef, orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                container.innerHTML = '';
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-secondary">История операций пуста.</p>';
+                    return;
+                }
+                snapshot.forEach(doc => {
+                    const entry = doc.data();
+                    const logItem = document.createElement('div');
+                    logItem.className = 'p-3 rounded-lg';
+                    const isAdd = entry.type === 'add';
+                    logItem.classList.add(isAdd ? 'history-item-add' : 'history-item-subtract');
+                    const date = entry.timestamp.toDate().toLocaleString('ru-RU');
+                    const changeText = isAdd ? `+${entry.change}` : `${entry.change}`;
+                    const changeColor = isAdd ? 'text-green-700' : 'text-red-700';
+                    const typeText = isAdd ? 'Приход' : 'Списание';
+                    const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : '';
+                    const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : '';
+                    logItem.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-semibold header-title">${typeText}</p> <p class="text-sm text-secondary">${date}</p> ${commentHtml} ${userHtml} </div> <div class="text-right flex-shrink-0 ml-4"> <p class="font-bold text-lg ${changeColor}">${changeText}</p> <p class="text-sm text-secondary">Остаток: ${entry.newQuantity}</p> </div> </div> `;
+                    container.appendChild(logItem);
+                });
+            } catch (error) {
+                handleFirebaseError(error, 'загрузке истории');
+            }
+        }
         function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
-
     </script>
 </body>
 </html>
