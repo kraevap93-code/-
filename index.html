@@ -105,6 +105,79 @@
         .category-header-unapproved { background-color: var(--unapproved-bg); padding: 0.5rem; border-radius: 0.5rem; }
         .history-item-add { background-color: rgba(22, 163, 74, 0.1); }
         .history-item-subtract { background-color: rgba(239, 68, 68, 0.1); }
+
+        /* New Theme Toggle Styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
+        }
+        .theme-switch input {
+            display: none;
+        }
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+        }
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
+        .slider .sun-icon, .slider .moon-icon {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+            transition: opacity 0.4s;
+        }
+        .slider .sun-icon {
+            left: 7px;
+            opacity: 1;
+        }
+        .slider .moon-icon {
+            right: 7px;
+            color: #fff;
+            opacity: 0;
+        }
+        input:checked + .slider .sun-icon {
+            opacity: 0;
+        }
+        input:checked + .slider .moon-icon {
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body class="main-container">
@@ -152,17 +225,18 @@
                         <button id="logout-btn" class="text-sm text-red-500 hover:underline mt-1">Выйти</button>
                     </div>
                     <!-- Theme Toggle -->
-                    <div>
-                        <button id="theme-toggle-btn" title="Переключить тему" class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 border border-black text-black dark:bg-zinc-800 dark:border-white dark:text-white transition">
-                            <!-- Sun Icon -->
-                            <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-15.66l-.707.707M4.04 19.96l-.707.707M21 12h-1M4 12H3m16.96-7.96l-.707-.707M4.04 4.04l-.707-.707" />
-                            </svg>
-                            <!-- Moon Icon -->
-                            <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
-                        </button>
+                     <div class="theme-switch-wrapper">
+                        <label class="theme-switch" for="theme-toggle-checkbox">
+                            <input type="checkbox" id="theme-toggle-checkbox" />
+                            <div class="slider round">
+                                <svg class="sun-icon h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-15.66l-.707.707M4.04 19.96l-.707.707M21 12h-1M4 12H3m16.96-7.96l-.707-.707M4.04 4.04l-.707-.707" />
+                                </svg>
+                                 <svg class="moon-icon h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                 </svg>
+                            </div>
+                        </label>
                     </div>
                 </div>
                 <!-- Main Title -->
@@ -553,25 +627,20 @@
 
         
             // Theme toggle listener
-            const themeToggleBtn = document.getElementById('theme-toggle-btn');
-            const sunIcon = document.getElementById('theme-icon-sun');
-            const moonIcon = document.getElementById('theme-icon-moon');
-
+            const themeToggleCheckbox = document.getElementById('theme-toggle-checkbox');
+            
             function applyTheme(theme) {
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
-                    sunIcon.style.display = 'block';
-                    moonIcon.style.display = 'none';
+                    themeToggleCheckbox.checked = true;
                 } else {
                     document.documentElement.classList.remove('dark');
-                    sunIcon.style.display = 'none';
-                    moonIcon.style.display = 'block';
+                    themeToggleCheckbox.checked = false;
                 }
             }
 
-            themeToggleBtn.addEventListener('click', () => {
-                const isDarkMode = document.documentElement.classList.contains('dark');
-                const newTheme = isDarkMode ? 'light' : 'dark';
+            themeToggleCheckbox.addEventListener('change', () => {
+                const newTheme = themeToggleCheckbox.checked ? 'dark' : 'light';
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             });
