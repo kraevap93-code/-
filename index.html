@@ -150,8 +150,11 @@
                              <button id="logout-btn" class="text-sm text-red-500 hover:underline mt-1">Выйти</button>
                         </div>
                         <!-- Controls -->
-                        <div class="w-full sm:w-auto flex justify-between items-center order-2 sm:order-2">
-                             <button id="global-history-btn" class="hidden text-sm bg-yellow-400 text-zinc-800 hover:bg-yellow-500 font-semibold px-3 py-1 rounded-md transition">Общая история</button>
+                        <div class="w-full sm:w-auto flex justify-between items-center order-2 sm:order-2 gap-4">
+                             <div class="flex items-center gap-2">
+                                <button id="manage-categories-btn" class="hidden text-sm bg-blue-500 text-white hover:bg-blue-600 font-semibold px-3 py-1 rounded-md transition">Управлять категориями</button>
+                                <button id="global-history-btn" class="hidden text-sm bg-yellow-400 text-zinc-800 hover:bg-yellow-500 font-semibold px-3 py-1 rounded-md transition">Общая история</button>
+                             </div>
                              <label for="theme-toggle-input" title="Переключить тему" class="relative w-16 h-8 flex items-center bg-sky-200 dark:bg-zinc-700 rounded-full cursor-pointer p-1 transition-colors duration-300">
                                 <input type="checkbox" id="theme-toggle-input" class="sr-only peer">
                                 <span class="w-6 h-6 bg-yellow-400 dark:bg-slate-300 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center peer-checked:translate-x-8">
@@ -173,17 +176,7 @@
                 <form id="add-material-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
                     <div>
                         <label for="material-category" class="block text-sm font-medium form-label mb-1">Категория</label>
-                        <select id="material-category" required class="form-select w-full px-4 py-2 border rounded-lg transition">
-                            <option value="Жидкие расходники">Жидкие расходники</option>
-                            <option value="Краска">Краска</option>
-                            <option value="Лак DMS">Лак DMS</option>
-                            <option value="Утвержденная самоклейка">Утвержденная самоклейка</option>
-                            <option value="Самоклейка тест">Самоклейка тест</option>
-                            <option value="Не утвержденная самоклейка">Не утвержденная самоклейка</option>
-                            <option value="Фольга ДжетТач">Фольга ДжетТач</option>
-                            <option value="Фольга DMS">Фольга DMS</option>
-                            <option value="Другое">Другое</option>
-                        </select>
+                        <select id="material-category" required class="form-select w-full px-4 py-2 border rounded-lg transition"></select>
                     </div>
                     <div>
                         <label for="material-name" class="block text-sm font-medium form-label mb-1">Название</label>
@@ -222,18 +215,7 @@
                     <label for="name-search-input" class="block text-sm font-medium form-label mb-1">Поиск по названию или номенклатуре</label>
                     <input type="text" id="name-search-input" placeholder="Введите название или номенклатуру..." class="form-input w-full px-4 py-2 border rounded-lg transition">
                 </div>
-                <div id="category-filters" class="flex flex-wrap gap-2 mb-6">
-                     <button data-category="All" class="filter-btn active-filter">Все</button>
-                     <button data-category="Жидкие расходники" class="filter-btn">Жидкие расходники</button>
-                     <button data-category="Краска" class="filter-btn">Краска</button>
-                     <button data-category="Лак DMS" class="filter-btn">Лак DMS</button>
-                     <button data-category="Утвержденная самоклейка" class="filter-btn" style="background-color: var(--approved-bg);">Утвержденная самоклейка</button>
-                     <button data-category="Самоклейка тест" class="filter-btn">Самоклейка тест</button>
-                     <button data-category="Не утвержденная самоклейка" class="filter-btn" style="background-color: var(--unapproved-bg);">Не утвержденная самоклейка</button>
-                     <button data-category="Фольга ДжетТач" class="filter-btn">Фольга ДжетТач</button>
-                     <button data-category="Фольга DMS" class="filter-btn">Фольга DMS</button>
-                     <button data-category="Другое" class="filter-btn">Другое</button>
-                </div>
+                <div id="category-filters" class="flex flex-wrap gap-2 mb-6"></div>
                 <div id="width-search-container" class="mb-6 hidden">
                     <label for="width-search-input" class="block text-sm font-medium form-label mb-1">Поиск по ширине (мм)</label>
                     <div class="flex gap-2">
@@ -255,6 +237,8 @@
     <div id="delete-confirm-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-sm m-4 relative"><h3 class="text-xl font-semibold mb-2 header-title">Подтверждение</h3><p class="text-secondary mb-6">Вы уверены, что хотите удалить этот материал?</p><div class="flex justify-end space-x-3"><button type="button" id="cancel-delete" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Отмена</button><button type="button" id="confirm-delete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Удалить</button></div></div></div>
     <div id="history-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-lg m-4 relative flex flex-col" style="max-height: 90vh;"><div class="flex justify-between items-center mb-4 pb-4 border-b border-border-color"><h3 class="text-lg sm:text-xl font-semibold header-title" id="history-modal-title">История операций</h3><button id="close-history-modal" class="text-2xl text-secondary hover:text-primary">&times;</button></div><div id="history-log-container" class="overflow-y-auto space-y-2"></div></div></div>
     <div id="global-history-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-3xl m-4 relative flex flex-col" style="max-height: 90vh;"><div class="flex justify-between items-center mb-4 pb-4 border-b border-border-color"><h3 class="text-lg sm:text-xl font-semibold header-title">Общая история всех операций</h3><button id="close-global-history-modal" class="text-2xl text-secondary hover:text-primary">&times;</button></div><div id="global-history-log-container" class="overflow-y-auto space-y-2"></div></div></div>
+    <div id="manage-categories-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-md m-4 relative"><h3 class="text-xl font-semibold mb-4 header-title">Управление категориями</h3><form id="add-category-form" class="flex gap-2"><input type="text" id="new-category-name" placeholder="Название новой категории" required class="form-input flex-grow px-4 py-2 border rounded-lg transition"><button type="submit" class="btn-primary px-4 py-2 rounded-lg">Добавить</button></form><p id="category-message" class="text-sm text-center mt-3"></p><div class="mt-6 flex justify-end"><button type="button" id="close-categories-modal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Закрыть</button></div></div></div>
+    <div id="move-material-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-md m-4 relative"><h3 class="text-xl font-semibold mb-2 header-title">Переместить материал</h3><p id="move-material-name" class="text-secondary mb-4"></p><form id="move-material-form"><label for="move-category-select" class="block text-sm font-medium form-label mb-1">Новая категория</label><select id="move-category-select" required class="form-select w-full px-4 py-2 border rounded-lg transition mb-4"></select><div class="flex justify-end space-x-3"><button type="button" id="cancel-move" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Отмена</button><button type="submit" class="btn-primary px-4 py-2 rounded-lg">Переместить</button></div></form></div></div>
 
     <script type="module">
         // --- Firebase Initialization ---
@@ -274,9 +258,9 @@
         
         // --- Global State & Constants ---
         let db, auth, currentUser;
-        let materialsCollectionRef;
-        let unsubscribe;
-        let allMaterials = [];
+        let materialsCollectionRef, categoriesCollectionRef;
+        let unsubscribeMaterials, unsubscribeCategories;
+        let allMaterials = [], allCategories = [];
         let currentFilter = 'All';
         let sortConfig = { category: 'Утвержденная самоклейка', direction: 'asc' };
         let isLoginMode = true;
@@ -311,15 +295,19 @@
                     document.getElementById('user-email').innerHTML = `${user.email} ${isAdmin ? '<span class="text-xs font-bold text-yellow-500 bg-yellow-400/10 px-2 py-1 rounded-full">Администратор</span>' : ''}`;
                     document.getElementById('add-material-card').style.display = isAdmin ? 'block' : 'none';
                     document.getElementById('global-history-btn').style.display = isAdmin ? 'inline-block' : 'none';
+                    document.getElementById('manage-categories-btn').style.display = isAdmin ? 'inline-block' : 'none';
                     
                     materialsCollectionRef = collection(db, `materials`);
+                    categoriesCollectionRef = collection(db, 'categories');
                     checkAndAddInitialData();
                     listenForMaterials();
+                    listenForCategories();
                 } else {
                     currentUser = null;
                     authScreen.style.display = 'flex';
                     appScreen.style.display = 'none';
-                    if (unsubscribe) unsubscribe();
+                    if (unsubscribeMaterials) unsubscribeMaterials();
+                    if (unsubscribeCategories) unsubscribeCategories();
                 }
             });
             
@@ -455,6 +443,8 @@
             });
             
             document.getElementById('global-history-btn').addEventListener('click', openGlobalHistoryModal);
+            document.getElementById('manage-categories-btn').addEventListener('click', openManageCategoriesModal);
+
 
             // Add Material Form
             const addForm = document.getElementById('add-material-form');
@@ -488,9 +478,13 @@
                     return;
                 }
                 const materialId = target.dataset.id;
+                const materialName = target.dataset.name;
+                const materialCategory = target.dataset.category;
+
                 if (target.classList.contains('update-btn')) openUpdateModal(materialId, target.dataset.action);
                 if (target.classList.contains('delete-btn')) openDeleteConfirmModal(materialId);
-                if (target.classList.contains('history-btn')) openHistoryModal(materialId, target.dataset.name);
+                if (target.classList.contains('history-btn')) openHistoryModal(materialId, materialName);
+                if (target.classList.contains('move-btn')) openMoveMaterialModal(materialId, materialName, materialCategory);
             });
 
             // Filters
@@ -498,7 +492,8 @@
                 const target = e.target.closest('button.filter-btn');
                 if (target) {
                     currentFilter = target.dataset.category;
-                    document.querySelector('#category-filters .active-filter').classList.remove('active-filter');
+                    const currentActive = document.querySelector('#category-filters .active-filter');
+                    if(currentActive) currentActive.classList.remove('active-filter');
                     target.classList.add('active-filter');
                     const showWidthSearch = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS', 'All'].includes(currentFilter);
                     document.getElementById('width-search-container').classList.toggle('hidden', !showWidthSearch);
@@ -549,7 +544,12 @@
             document.querySelector('#history-modal .modal-backdrop').addEventListener('click', closeHistoryModal);
             document.getElementById('close-global-history-modal').addEventListener('click', closeGlobalHistoryModal);
             document.querySelector('#global-history-modal .modal-backdrop').addEventListener('click', closeGlobalHistoryModal);
-
+            document.getElementById('close-categories-modal').addEventListener('click', closeManageCategoriesModal);
+            document.querySelector('#manage-categories-modal .modal-backdrop').addEventListener('click', closeManageCategoriesModal);
+            document.getElementById('cancel-move').addEventListener('click', closeMoveMaterialModal);
+            document.querySelector('#move-material-modal .modal-backdrop').addEventListener('click', closeMoveMaterialModal);
+            document.getElementById('add-category-form').addEventListener('submit', handleAddCategory);
+            document.getElementById('move-material-form').addEventListener('submit', handleMoveMaterial);
         
             // Theme toggle listener
             const themeToggleInput = document.getElementById('theme-toggle-input');
@@ -577,12 +577,22 @@
         // --- Firebase Data Functions ---
         async function checkAndAddInitialData() {
              try {
-                const snapshot = await getDocs(materialsCollectionRef);
-                if (snapshot.empty) {
+                const materialsSnap = await getDocs(materialsCollectionRef);
+                if (materialsSnap.empty) {
                     const batch = writeBatch(db);
                     initialData.forEach(material => {
                         const docRef = doc(materialsCollectionRef);
                         batch.set(docRef, { ...material, createdAt: new Date() });
+                    });
+                    await batch.commit();
+                }
+                const categoriesSnap = await getDocs(categoriesCollectionRef);
+                if(categoriesSnap.empty) {
+                    const initialCategories = [...new Set(initialData.map(item => item.category))];
+                    const batch = writeBatch(db);
+                    initialCategories.forEach(name => {
+                        const docRef = doc(categoriesCollectionRef);
+                        batch.set(docRef, { name });
                     });
                     await batch.commit();
                 }
@@ -591,9 +601,9 @@
             }
         }
         function listenForMaterials() {
-            if (unsubscribe) unsubscribe();
+            if (unsubscribeMaterials) unsubscribeMaterials();
             const q = query(materialsCollectionRef);
-            unsubscribe = onSnapshot(q, (snapshot) => {
+            unsubscribeMaterials = onSnapshot(q, (snapshot) => {
                 document.getElementById('error-container').classList.add('hidden');
                 allMaterials = [];
                 snapshot.forEach((doc) => {
@@ -603,6 +613,17 @@
             }, (error) => {
                 handleFirebaseError(error, 'получении данных в реальном времени');
             });
+        }
+        function listenForCategories() {
+             if (unsubscribeCategories) unsubscribeCategories();
+             const q = query(categoriesCollectionRef, orderBy("name"));
+             unsubscribeCategories = onSnapshot(q, (snapshot) => {
+                allCategories = [];
+                 snapshot.forEach((doc) => {
+                    allCategories.push(doc.data().name);
+                 });
+                 updateCategoryUI();
+             });
         }
         async function addMaterial(name, quantity, unit, category, width, nomenclature) {
             try {
@@ -672,8 +693,68 @@
                 handleFirebaseError(error, 'удалении материала');
             }
         }
+        async function handleAddCategory(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-category-name');
+            const messageEl = document.getElementById('category-message');
+            const newCategoryName = input.value.trim();
+            if (!newCategoryName) return;
+
+            if (allCategories.map(c => c.toLowerCase()).includes(newCategoryName.toLowerCase())) {
+                messageEl.textContent = 'Такая категория уже существует.';
+                messageEl.className = 'text-sm text-center mt-3 text-red-500';
+                return;
+            }
+
+            try {
+                await addDoc(categoriesCollectionRef, { name: newCategoryName });
+                messageEl.textContent = 'Категория добавлена!';
+                messageEl.className = 'text-sm text-center mt-3 text-green-500';
+                input.value = '';
+                setTimeout(() => { messageEl.textContent = ''; }, 2000);
+            } catch(error) {
+                handleFirebaseError(error, 'добавлении категории');
+            }
+        }
+        async function handleMoveMaterial(e) {
+            e.preventDefault();
+            const materialId = document.getElementById('move-material-form').dataset.materialId;
+            const newCategory = document.getElementById('move-category-select').value;
+            if(!materialId || !newCategory) return;
+            try {
+                await updateDoc(doc(materialsCollectionRef, materialId), {
+                    category: newCategory
+                });
+                closeMoveMaterialModal();
+            } catch (error) {
+                 handleFirebaseError(error, 'перемещении материала');
+            }
+        }
+
 
         // --- UI Rendering & Modal Functions ---
+        function updateCategoryUI() {
+            // Update filter buttons
+            const filtersContainer = document.getElementById('category-filters');
+            filtersContainer.innerHTML = `<button data-category="All" class="filter-btn">Все</button>`;
+            allCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.category = cat;
+                btn.textContent = cat;
+                if (cat === 'Утвержденная самоклейка') btn.style.backgroundColor = 'var(--approved-bg)';
+                if (cat === 'Не утвержденная самоклейка') btn.style.backgroundColor = 'var(--unapproved-bg)';
+                filtersContainer.appendChild(btn);
+            });
+            const activeFilterBtn = filtersContainer.querySelector(`[data-category="${currentFilter}"]`) || filtersContainer.querySelector(`[data-category="All"]`);
+            activeFilterBtn.classList.add('active-filter');
+
+            // Update select dropdowns
+            const addFormSelect = document.getElementById('material-category');
+            addFormSelect.innerHTML = allCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+            handleCategoryChange(); // re-populate suggestions
+        }
+
         function renderMaterials() {
             const listElement = document.getElementById('materials-list');
             const loadingMessage = document.getElementById('loading-message');
@@ -727,14 +808,14 @@
                     const card = document.createElement('div');
                     card.className = 'card p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
                     const quantityColor = material.quantity < 100 ? 'text-red-500' : 'text-green-600';
-                    card.innerHTML = ` <div class="flex-grow"> <div class="flex items-baseline gap-3 flex-wrap"> <h4 class="text-lg font-bold header-title">${material.name}</h4> ${material.width ? `<p class="text-base font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full">${material.width} мм</p>` : ''} </div> ${material.nomenclature ? `<p class="text-xs text-secondary mt-1">${material.nomenclature}</p>` : ''} <p class="text-sm text-secondary mt-2">Остаток:</p> <p class="text-2xl font-bold ${quantityColor}">${material.quantity} <span class="text-base font-normal">${material.unit}</span></p> </div> <div class="flex items-center gap-2 w-full sm:w-auto"> <button data-id="${material.id}" data-action="add" class="update-btn flex-1 sm:flex-none w-10 h-10 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/50 dark:text-green-400 rounded-full flex items-center justify-center text-2xl font-bold transition">+</button> <button data-id="${material.id}" data-action="subtract" class="update-btn flex-1 sm:flex-none w-10 h-10 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 dark:text-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold transition">-</button> <button data-id="${material.id}" data-name="${material.name}" class="history-btn flex-1 sm:flex-none w-10 h-10 text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 dark:text-blue-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button> ${isAdmin ? `<button data-id="${material.id}" class="delete-btn flex-1 sm:flex-none w-10 h-10 text-red-700 hover:bg-red-100 dark:hover:bg-red-900/50 dark:text-red-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : ''} </div>`;
+                    card.innerHTML = ` <div class="flex-grow"> <div class="flex items-baseline gap-3 flex-wrap"> <h4 class="text-lg font-bold header-title">${material.name}</h4> ${material.width ? `<p class="text-base font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full">${material.width} мм</p>` : ''} </div> ${material.nomenclature ? `<p class="text-xs text-secondary mt-1">${material.nomenclature}</p>` : ''} <p class="text-sm text-secondary mt-2">Остаток:</p> <p class="text-2xl font-bold ${quantityColor}">${material.quantity} <span class="text-base font-normal">${material.unit}</span></p> </div> <div class="flex items-center gap-2 w-full sm:w-auto"> ${isAdmin ? `<button data-id="${material.id}" data-name="${material.name}" data-category="${material.category}" class="move-btn flex-1 sm:flex-none w-10 h-10 text-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900/50 dark:text-purple-400 rounded-full flex items-center justify-center transition" title="Переместить"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg></button>` : ''} <button data-id="${material.id}" data-action="add" class="update-btn flex-1 sm:flex-none w-10 h-10 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/50 dark:text-green-400 rounded-full flex items-center justify-center text-2xl font-bold transition">+</button> <button data-id="${material.id}" data-action="subtract" class="update-btn flex-1 sm:flex-none w-10 h-10 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 dark:text-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold transition">-</button> <button data-id="${material.id}" data-name="${material.name}" class="history-btn flex-1 sm:flex-none w-10 h-10 text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 dark:text-blue-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button> ${isAdmin ? `<button data-id="${material.id}" class="delete-btn flex-1 sm:flex-none w-10 h-10 text-red-700 hover:bg-red-100 dark:hover:bg-red-900/50 dark:text-red-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : ''} </div>`;
                     itemsContainer.appendChild(card);
                 });
                 categoryContainer.appendChild(itemsContainer);
                 listElement.appendChild(categoryContainer);
             });
         }
-        function handleCategoryChange() { const categorySelect = document.getElementById('material-category'); const widthContainer = document.getElementById('material-width-container'); const nameDatalist = document.getElementById('material-names-list'); const nameInput = document.getElementById('material-name'); const selectedCategory = categorySelect.value; const categoriesWithWidth = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS']; widthContainer.classList.toggle('hidden', !categoriesWithWidth.includes(selectedCategory)); nameDatalist.innerHTML = ''; nameInput.value = ''; if (materialNameSuggestions[selectedCategory]) { materialNameSuggestions[selectedCategory].forEach(name => { const option = document.createElement('option'); option.value = name; nameDatalist.appendChild(option); }); } }
+        function handleCategoryChange() { const categorySelect = document.getElementById('material-category'); const widthContainer = document.getElementById('material-width-container'); const nameDatalist = document.getElementById('material-names-list'); const nameInput = document.getElementById('material-name'); const selectedCategory = categorySelect.value; const categoriesWithWidth = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS']; widthContainer.classList.toggle('hidden', !categoriesWithWidth.includes(selectedCategory)); nameDatalist.innerHTML = ''; if (materialNameSuggestions[selectedCategory]) { materialNameSuggestions[selectedCategory].forEach(name => { const option = document.createElement('option'); option.value = name; nameDatalist.appendChild(option); }); } }
         function openUpdateModal(id, action) { const modal = document.getElementById('update-modal'); const writeOffBtn = document.getElementById('write-off-all-btn'); document.getElementById('modal-material-id').value = id; document.getElementById('modal-action-type').value = action; document.getElementById('update-quantity-form').reset(); document.getElementById('modal-title').textContent = action === 'add' ? 'Приход материала' : 'Списание материала'; if (action === 'subtract') { writeOffBtn.classList.remove('hidden'); } else { writeOffBtn.classList.add('hidden'); } modal.style.display = 'flex'; }
         function closeUpdateModal() { document.getElementById('update-modal').style.display = 'none'; }
         function openDeleteConfirmModal(id) { const modal = document.getElementById('delete-confirm-modal'); document.getElementById('confirm-delete').dataset.id = id; modal.style.display = 'flex'; }
@@ -853,6 +934,23 @@
             }
         }
         function closeGlobalHistoryModal() { document.getElementById('global-history-modal').style.display = 'none'; }
+        
+        function openManageCategoriesModal() { document.getElementById('manage-categories-modal').style.display = 'flex'; }
+        function closeManageCategoriesModal() { document.getElementById('manage-categories-modal').style.display = 'none'; }
+        
+        function openMoveMaterialModal(id, name, currentCategory) {
+            const modal = document.getElementById('move-material-modal');
+            document.getElementById('move-material-form').dataset.materialId = id;
+            document.getElementById('move-material-name').textContent = name;
+            const select = document.getElementById('move-category-select');
+            select.innerHTML = allCategories
+                .filter(c => c !== currentCategory)
+                .map(c => `<option value="${c}">${c}</option>`)
+                .join('');
+            modal.style.display = 'flex';
+        }
+        function closeMoveMaterialModal() { document.getElementById('move-material-modal').style.display = 'none'; }
+
 
     </script>
 </body>
