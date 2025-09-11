@@ -3,956 +3,1312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Материалы рулонной этикетки</title>
+    <title>Панель Мониторинга</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f3f4f6;
-            --text-primary: #111827;
-            --text-secondary: #4b5563;
-            --accent-color: #facc15; /* yellow-400 */
-            --accent-text: #111827;
-            --border-color: #e5e7eb;
-            --card-bg: #ffffff;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --approved-bg: rgba(74, 222, 128, 0.1);
-            --unapproved-bg: rgba(248, 113, 113, 0.1);
+            --bg-color: #27272a;
+            --card-bg-color: #3f3f46;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --input-bg: #27272a;
+            --border-color: #52525b;
+            --header-bg: #27272a;
+            --table-header-bg: #3f3f46;
+            --hover-bg: #52525b;
+            --date-header-bg: #52525b;
+            --problem-bg: rgba(239, 68, 68, 0.1);
+            --problem-hover-bg: rgba(239, 68, 68, 0.2);
+            --active-tab-bg: #FFC700;
+            --active-tab-text: #1E1E1E;
+            --inactive-tab-bg: #3f3f46;
+            --inactive-tab-text: #f4f4f5;
         }
 
-        html.dark {
-            --bg-primary: #3f3f46;      /* zinc-700 */
-            --bg-secondary: #27272a;    /* zinc-800 */
-            --text-primary: #f4f4f5;    /* zinc-100 */
-            --text-secondary: #a1a1aa;  /* zinc-400 */
-            --accent-color: #facc15;    /* yellow-400 */
-            --accent-text: #18181b;     /* zinc-900 */
-            --border-color: #52525b;    /* zinc-600 */
-            --card-bg: #3f3f46;         /* zinc-700 */
-            --shadow-color: rgba(0, 0, 0, 0.4);
-            --approved-bg: rgba(74, 222, 128, 0.15);
-            --unapproved-bg: rgba(248, 113, 113, 0.15);
+        html.light {
+            --bg-color: #f9fafb;
+            --card-bg-color: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --input-bg: #ffffff;
+            --border-color: #d1d5db;
+            --header-bg: #f9fafb;
+            --table-header-bg: #f3f4f6;
+            --hover-bg: #f3f4f6;
+            --date-header-bg: #e5e7eb;
+            --problem-bg: rgba(239, 68, 68, 0.1);
+            --problem-hover-bg: rgba(239, 68, 68, 0.2);
+            --active-tab-bg: #FFC700;
+            --active-tab-text: #1E1E1E;
+            --inactive-tab-bg: #e5e7eb;
+            --inactive-tab-text: #111827;
         }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-secondary);
+            background-color: var(--bg-color);
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
         }
-
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.5); }
-        .main-container { background-color: var(--bg-secondary); }
-        .header-title { color: var(--text-primary); }
-        .card { background-color: var(--card-bg); box-shadow: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -1px var(--shadow-color); }
-        .form-label { color: var(--text-secondary); }
-        .form-input, .form-select { 
-            background-color: var(--bg-primary);
-            border-color: var(--border-color);
+        .card {
+            background-color: var(--card-bg-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            transition: background-color 0.3s;
+        }
+        .form-input, .form-select, .form-textarea {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
             color: var(--text-primary);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        .form-input:focus, .form-select:focus {
-            --tw-ring-color: var(--accent-color);
-            border-color: var(--accent-color);
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #FFC700;
+            box-shadow: 0 0 0 2px rgba(255, 199, 0, 0.5);
         }
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: var(--accent-text);
-        }
-        .btn-primary:hover { filter: brightness(0.9); }
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background-color 0.2s, color 0.2s;
-            border: 1px solid transparent;
-        }
-        .filter-btn.active-filter {
-            background-color: var(--accent-color);
-            color: var(--accent-text);
-            border-color: var(--accent-color);
-        }
-        .filter-btn:not(.active-filter) {
-            background-color: var(--bg-primary);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-        }
-         .filter-btn:not(.active-filter):hover { background-color: var(--bg-secondary); }
-        .sort-btn {
-            background-color: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            border: 1px solid transparent;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
             transition: background-color 0.2s;
+            cursor: pointer;
         }
-        .sort-btn:hover { background-color: var(--bg-secondary); }
-        .category-header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
+        .btn-submit {
+            color: #1E1E1E;
+            background-color: #FFC700;
         }
-        .category-header { color: var(--text-primary); }
-        .category-header-approved { background-color: var(--approved-bg); padding: 0.5rem; border-radius: 0.5rem; }
-        .category-header-unapproved { background-color: var(--unapproved-bg); padding: 0.5rem; border-radius: 0.5rem; }
-        .history-item-add { background-color: rgba(22, 163, 74, 0.1); }
-        .history-item-subtract { background-color: rgba(239, 68, 68, 0.1); }
+        .btn-submit:hover {
+            background-color: #e6b300;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background-color: var(--hover-bg);
+        }
+        .table-header {
+            background-color: var(--table-header-bg);
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex; align-items: center; justify-content: center; z-index: 50;
+            transition: opacity 0.3s ease;
+        }
+        .slider-checkbox:checked ~ .slider-bg { background-color: #FFC700; }
+        html.light .slider-checkbox:checked ~ .slider-bg { background-color: #FFC700; }
+        .slider-checkbox:checked ~ .slider-dot { transform: translateX(100%); }
+        
+        /* Air Quality Status Dots */
+        .status-dot {
+            display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+            margin-right: 8px; vertical-align: middle;
+        }
+        .status-good { background-color: #3CFF00; }
+        .status-moderate { background-color: #FFE500; }
+        .status-bad { background-color: #FF0000; }
+
+        /* Navigation Tabs */
+        .nav-tab {
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--inactive-tab-bg);
+            color: var(--inactive-tab-text);
+            border: 2px solid transparent;
+        }
+        .nav-tab.active {
+            background-color: var(--active-tab-bg);
+            color: var(--active-tab-text);
+        }
+        .nav-tab:not(.active):hover {
+            background-color: var(--hover-bg);
+            border-color: var(--border-color);
+        }
+        .scrollable-table {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
-<body class="main-container">
+<body class="p-4 md:p-8">
 
-    <!-- Auth Screen -->
-    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="card p-6 sm:p-8 rounded-2xl w-full max-w-md">
-            <h2 id="auth-title" class="text-2xl sm:text-3xl font-bold text-center mb-6 header-title">Вход в систему</h2>
-            <form id="auth-form">
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium form-label mb-1">Email</label>
-                    <input type="email" id="email" required class="form-input w-full px-4 py-2 border rounded-lg transition">
-                </div>
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium form-label mb-1">Пароль</label>
-                    <input type="password" id="password" required class="form-input w-full px-4 py-2 border rounded-lg transition">
-                </div>
-                <div id="confirm-password-container" class="mb-6 hidden">
-                     <label for="confirm-password" class="block text-sm font-medium form-label mb-1">Подтвердите пароль</label>
-                     <input type="password" id="confirm-password" class="form-input w-full px-4 py-2 border rounded-lg transition">
-                </div>
-                <button id="auth-button" type="submit" class="btn-primary w-full font-semibold py-2.5 px-4 rounded-lg transition duration-300">Войти</button>
-            </form>
-            <p id="auth-message" class="text-center mt-4 text-sm"></p>
-            <p class="text-center mt-4 text-sm form-label">
-                <span id="auth-toggle-prompt">Нет аккаунта?</span>
-                <a href="#" id="toggle-auth-mode" class="font-semibold text-yellow-500 hover:underline">Зарегистрироваться</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Main App Screen (hidden by default) -->
-    <div id="app-screen" class="hidden">
-         <div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-5xl">
-            <header class="mb-8">
-                <div class="flex flex-col gap-4">
-                    <!-- User Info & Controls -->
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                        <!-- User Info -->
-                        <div class="w-full sm:w-auto text-left order-1 sm:order-1">
-                            <p class="text-sm text-secondary">Вы вошли как:</p>
-                            <p id="user-email" class="font-semibold header-title break-all"></p>
-                             <button id="logout-btn" class="text-sm text-red-500 hover:underline mt-1">Выйти</button>
-                        </div>
-                        <!-- Controls -->
-                        <div class="w-full sm:w-auto flex justify-between items-center order-2 sm:order-2 gap-4">
-                             <div class="flex items-center gap-2">
-                                <button id="manage-categories-btn" class="hidden text-sm bg-blue-500 text-white hover:bg-blue-600 font-semibold px-3 py-1 rounded-md transition">Управлять категориями</button>
-                                <button id="global-history-btn" class="hidden text-sm bg-yellow-400 text-zinc-800 hover:bg-yellow-500 font-semibold px-3 py-1 rounded-md transition">Общая история</button>
-                             </div>
-                             <label for="theme-toggle-input" title="Переключить тему" class="relative w-16 h-8 flex items-center bg-sky-200 dark:bg-zinc-700 rounded-full cursor-pointer p-1 transition-colors duration-300">
-                                <input type="checkbox" id="theme-toggle-input" class="sr-only peer">
-                                <span class="w-6 h-6 bg-yellow-400 dark:bg-slate-300 rounded-full shadow-md transform transition-transform duration-300 flex items-center justify-center peer-checked:translate-x-8">
-                                    <svg class="h-4 w-4 text-white block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-15.66l-.707.707M4.04 19.96l-.707.707M21 12h-1M4 12H3m16.96-7.96l-.707-.707M4.04 4.04l-.707-.707M12 12a2 2 0 100-4 2 2 0 000 4z" /></svg>
-                                    <svg class="h-4 w-4 text-zinc-800 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                     <!-- Main Title -->
-                    <div class="text-center order-3">
-                        <h1 class="text-3xl sm:text-4xl font-bold header-title">Материалы рулонной этикетки</h1>
-                    </div>
-                </div>
-            </header>
-
-            <div id="add-material-card" class="card p-6 rounded-2xl mb-8">
-                <h2 class="text-xl sm:text-2xl font-semibold mb-4 header-title">Добавить материал</h2>
-                <form id="add-material-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
+    <!-- Auth Container -->
+    <div id="auth-container" class="max-w-md mx-auto">
+        <div class="card">
+            <div id="login-view">
+                <h2 class="text-2xl font-bold text-center mb-6">Вход в Панель Мониторинга</h2>
+                <form id="login-form" class="space-y-4">
                     <div>
-                        <label for="material-category" class="block text-sm font-medium form-label mb-1">Категория</label>
-                        <select id="material-category" required class="form-select w-full px-4 py-2 border rounded-lg transition"></select>
+                        <label for="login-email" class="block text-sm font-medium text-secondary">Email</label>
+                        <input type="email" id="login-email" class="mt-1 form-input" required>
                     </div>
                     <div>
-                        <label for="material-name" class="block text-sm font-medium form-label mb-1">Название</label>
-                        <input type="text" id="material-name" list="material-names-list" placeholder="Выберите или введите" required class="form-input w-full px-4 py-2 border rounded-lg transition">
-                        <datalist id="material-names-list"></datalist>
+                        <label for="login-password" class="block text-sm font-medium text-secondary">Пароль</label>
+                        <input type="password" id="login-password" class="mt-1 form-input" required>
                     </div>
-                    <div>
-                        <label for="material-nomenclature" class="block text-sm font-medium form-label mb-1">Номенклатура поставщика</label>
-                        <input type="text" id="material-nomenclature" placeholder="Введите номенклатуру" class="form-input w-full px-4 py-2 border rounded-lg transition">
-                    </div>
-                    <div id="material-width-container" class="hidden">
-                        <label for="material-width" class="block text-sm font-medium form-label mb-1">Ширина (мм)</label>
-                        <input type="number" id="material-width" placeholder="330" class="form-input w-full px-4 py-2 border rounded-lg transition">
-                    </div>
-                    <div>
-                        <label for="material-quantity" class="block text-sm font-medium form-label mb-1">Количество</label>
-                        <input type="number" id="material-quantity" placeholder="1000" step="any" required class="form-input w-full px-4 py-2 border rounded-lg transition">
-                    </div>
-                    <div>
-                        <label for="material-unit" class="block text-sm font-medium form-label mb-1">Ед. изм.</label>
-                        <select id="material-unit" required class="form-select w-full px-4 py-2 border rounded-lg transition">
-                            <option value="кг">кг</option>
-                            <option value="л">л</option>
-                            <option value="м/п">м/п</option>
-                            <option value="шт.">шт.</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-primary sm:col-span-2 lg:col-span-3 w-full font-semibold py-2.5 px-4 rounded-lg transition duration-300 mt-2">
-                        Добавить
-                    </button>
+                    <p id="login-error" class="text-red-500 text-sm hidden"></p>
+                    <button type="submit" class="btn btn-submit w-full">Войти</button>
                 </form>
+                <p class="mt-4 text-center text-sm text-secondary">
+                    Нет аккаунта? <a href="#" id="show-register" class="font-medium text-[#FFC700] hover:underline">Зарегистрироваться</a>
+                </p>
             </div>
-            <div>
-                <h2 class="text-xl sm:text-2xl font-semibold mb-4 header-title">Складские остатки</h2>
-                <div class="mb-4">
-                    <label for="name-search-input" class="block text-sm font-medium form-label mb-1">Поиск по названию или номенклатуре</label>
-                    <input type="text" id="name-search-input" placeholder="Введите название или номенклатуру..." class="form-input w-full px-4 py-2 border rounded-lg transition">
-                </div>
-                <div id="category-filters" class="flex flex-wrap gap-2 mb-6"></div>
-                <div id="width-search-container" class="mb-6 hidden">
-                    <label for="width-search-input" class="block text-sm font-medium form-label mb-1">Поиск по ширине (мм)</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="width-search-input" placeholder="Например, 330" class="form-input flex-grow md:flex-grow-0 md:w-1/3 px-4 py-2 border rounded-lg transition">
-                        <button id="width-search-reset" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-500 rounded-lg hover:bg-gray-300 transition">Сброс</button>
+            <div id="register-view" class="hidden">
+                <h2 class="text-2xl font-bold text-center mb-6">Регистрация</h2>
+                <form id="register-form" class="space-y-4">
+                    <div>
+                        <label for="register-email" class="block text-sm font-medium text-secondary">Email</label>
+                        <input type="email" id="register-email" class="mt-1 form-input" required>
                     </div>
-                </div>
-                <div id="error-container" class="hidden my-4 p-4 border border-red-500 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg">
-                    <p id="error-message" class="text-center"></p>
-                </div>
-                <p id="loading-message" class="text-center text-secondary py-4">Загрузка данных...</p>
-                <div id="materials-list" class="space-y-6"></div>
+                    <div>
+                        <label for="register-password" class="block text-sm font-medium text-secondary">Пароль</label>
+                        <input type="password" id="register-password" class="mt-1 form-input" required>
+                    </div>
+                    <p id="register-error" class="text-red-500 text-sm hidden"></p>
+                    <button type="submit" class="btn btn-submit w-full">Создать аккаунт</button>
+                </form>
+                <p class="mt-4 text-center text-sm text-secondary">
+                    Уже есть аккаунт? <a href="#" id="show-login" class="font-medium text-[#FFC700] hover:underline">Войти</a>
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-sm m-4 relative"><h3 class="text-xl font-semibold mb-4 header-title" id="modal-title">Обновить количество</h3><form id="update-quantity-form"><input type="hidden" id="modal-material-id"><input type="hidden" id="modal-action-type"><div><label for="quantity-change" class="block text-sm font-medium form-label mb-1">Значение</label><input type="number" id="quantity-change" min="0" step="any" placeholder="Введите число" required class="form-input w-full px-4 py-2 border rounded-lg transition"></div><div class="mt-4"><label for="quantity-comment" class="block text-sm font-medium form-label mb-1">Комментарий (необязательно)</label><textarea id="quantity-comment" placeholder="Например, номер заказа или причина" rows="3" class="form-input w-full px-4 py-2 border rounded-lg transition"></textarea></div><div class="mt-6 flex flex-wrap justify-end gap-2"><button type="button" id="cancel-update" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Отмена</button><button type="button" id="write-off-all-btn" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition hidden">Списать все</button><button type="submit" class="btn-primary px-4 py-2 rounded-lg transition">Подтвердить</button></div></form></div></div>
-    <div id="delete-confirm-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-sm m-4 relative"><h3 class="text-xl font-semibold mb-2 header-title">Подтверждение</h3><p class="text-secondary mb-6">Вы уверены, что хотите удалить этот материал?</p><div class="flex justify-end space-x-3"><button type="button" id="cancel-delete" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Отмена</button><button type="button" id="confirm-delete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Удалить</button></div></div></div>
-    <div id="history-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-lg m-4 relative flex flex-col" style="max-height: 90vh;"><div class="flex justify-between items-center mb-4 pb-4 border-b border-border-color"><h3 class="text-lg sm:text-xl font-semibold header-title" id="history-modal-title">История операций</h3><button id="close-history-modal" class="text-2xl text-secondary hover:text-primary">&times;</button></div><div id="history-log-container" class="overflow-y-auto space-y-2"></div></div></div>
-    <div id="global-history-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-3xl m-4 relative flex flex-col" style="max-height: 90vh;"><div class="flex justify-between items-center mb-4 pb-4 border-b border-border-color"><h3 class="text-lg sm:text-xl font-semibold header-title">Общая история всех операций</h3><button id="close-global-history-modal" class="text-2xl text-secondary hover:text-primary">&times;</button></div><div id="global-history-log-container" class="overflow-y-auto space-y-2"></div></div></div>
-    <div id="manage-categories-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-md m-4 relative"><h3 class="text-xl font-semibold mb-4 header-title">Управление категориями</h3><form id="add-category-form" class="flex gap-2"><input type="text" id="new-category-name" placeholder="Название новой категории" required class="form-input flex-grow px-4 py-2 border rounded-lg transition"><button type="submit" class="btn-primary px-4 py-2 rounded-lg">Добавить</button></form><p id="category-message" class="text-sm text-center mt-3"></p><div class="mt-6 flex justify-end"><button type="button" id="close-categories-modal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Закрыть</button></div></div></div>
-    <div id="move-material-modal" class="fixed inset-0 z-50 items-center justify-center hidden p-4"><div class="modal-backdrop fixed inset-0"></div><div class="card p-6 rounded-2xl w-full max-w-md m-4 relative"><h3 class="text-xl font-semibold mb-2 header-title">Переместить материал</h3><p id="move-material-name" class="text-secondary mb-4"></p><form id="move-material-form"><label for="move-category-select" class="block text-sm font-medium form-label mb-1">Новая категория</label><select id="move-category-select" required class="form-select w-full px-4 py-2 border rounded-lg transition mb-4"></select><div class="flex justify-end space-x-3"><button type="button" id="cancel-move" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Отмена</button><button type="submit" class="btn-primary px-4 py-2 rounded-lg">Переместить</button></div></form></div></div>
+    <!-- App Container -->
+    <div id="app-container" class="max-w-screen-2xl mx-auto hidden">
+        <header class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div>
+                    <p class="text-sm text-secondary">Вы вошли как:</p>
+                    <p id="user-email" class="text-lg font-bold"></p>
+                    <button id="logout-btn" class="text-sm text-red-500 hover:underline">Выйти</button>
+                </div>
+                 <div class="flex items-center gap-4">
+                    <button id="history-btn" class="hidden btn btn-secondary w-auto px-4 py-2 text-sm rounded-md">Общая история Климат</button>
+                    <label class="flex items-center cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" id="theme-toggle" class="sr-only slider-checkbox">
+                            <div class="block w-14 h-8 rounded-full slider-bg" style="background-color: var(--border-color);"></div>
+                            <div class="dot absolute left-1 top-1 w-6 h-6 rounded-full transition-transform slider-dot" style="background-color: var(--card-bg-color);"></div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <div class="flex justify-center items-center gap-4 p-2 rounded-lg" style="background-color: var(--card-bg-color);">
+                <button id="tab-klimat" data-view="klimat-view" class="nav-tab active">📊 Климат</button>
+                <button id="tab-vozduh" data-view="vozduh-view" class="nav-tab">🌬️ Качество воздуха</button>
+            </div>
+        </header>
+
+        <!-- VIEWS CONTAINER -->
+        <main>
+            <!-- Klimat View -->
+            <div id="klimat-view">
+                <div class="card">
+                    <h2 class="text-2xl font-semibold mb-6">Добавить новую запись</h2>
+                    <form id="add-klimat-form" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="klimat-date" class="block text-sm font-medium text-secondary">Дата</label>
+                                <input type="date" id="klimat-date" class="mt-1 form-input" required>
+                            </div>
+                            <div>
+                                <label for="klimat-time" class="block text-sm font-medium text-secondary">Время</label>
+                                <input type="time" id="klimat-time" class="mt-1 form-input" required>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-md font-semibold text-primary mb-2">Климат в помещении</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div><label for="temp" class="block text-sm font-medium text-secondary">Темп. (°С)</label><input type="number" step="0.001" id="temp" class="mt-1 form-input" required></div>
+                                <div><label for="humidity" class="block text-sm font-medium text-secondary">Влажн. (%)</label><input type="number" step="0.001" id="humidity" class="mt-1 form-input" required></div>
+                                <div><label for="pressure" class="block text-sm font-medium text-secondary">Давл. (мм)</label><input type="number" step="0.001" id="pressure" class="mt-1 form-input" required></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-md font-semibold text-primary mb-2">Отрицательное давление GIP</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                                <div><label for="cyan" class="block text-sm font-medium text-secondary">Cyan</label><input type="number" step="0.001" id="cyan" class="mt-1 form-input" required></div>
+                                <div><label for="magenta" class="block text-sm font-medium text-secondary">Magenta</label><input type="number" step="0.001" id="magenta" class="mt-1 form-input" required></div>
+                                <div><label for="yellow" class="block text-sm font-medium text-secondary">Yellow</label><input type="number" step="0.001" id="yellow" class="mt-1 form-input" required></div>
+                                <div><label for="black" class="block text-sm font-medium text-secondary">Black</label><input type="number" step="0.001" id="black" class="mt-1 form-input" required></div>
+                                <div><label for="white" class="block text-sm font-medium text-secondary">White</label><input type="number" step="0.001" id="white" class="mt-1 form-input" required></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="klimat-comment" class="block text-sm font-medium text-secondary">Комментарий</label>
+                            <select id="klimat-comment" class="mt-1 form-select">
+                                <option value="Прострелов, полос нет">Прострелов, полос нет</option>
+                                <option value="other">Другое (ввести вручную)</option>
+                            </select>
+                            <div id="klimat-custom-comment-wrapper" class="hidden mt-2">
+                                <input type="text" id="klimat-custom-comment" class="mt-1 form-input" placeholder="Введите свой комментарий...">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-submit w-full mt-4">Добавить</button>
+                    </form>
+                </div>
+                <div class="card mt-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-semibold">Журнал данных Климат</h2>
+                        <div class="flex items-center gap-2">
+                            <input type="date" id="search-date" class="form-input w-auto text-sm">
+                            <button id="search-btn" class="btn btn-submit w-auto px-4 py-2 text-sm rounded-md">Найти</button>
+                            <button id="reset-btn" class="btn btn-secondary w-auto px-4 py-2 text-sm rounded-md">Сбросить</button>
+                        </div>
+                    </div>
+                    <div id="klimat-loading" class="text-center text-secondary py-8">Загрузка данных...</div>
+                    <div class="overflow-x-auto hidden scrollable-table" id="klimat-table-container">
+                        <table class="min-w-full divide-y" style="border-color: var(--border-color);">
+                            <thead class="table-header">
+                                <tr>
+                                    <th rowspan="2" class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Время</th>
+                                    <th colspan="3" class="px-6 py-3 text-center text-xs font-medium text-secondary uppercase tracking-wider border-b border-l" style="border-color: var(--border-color);">Климат</th>
+                                    <th colspan="5" class="px-6 py-3 text-center text-xs font-medium text-secondary uppercase tracking-wider border-b border-l" style="border-color: var(--border-color);">Давление GIP</th>
+                                    <th rowspan="2" class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider border-l" style="border-color: var(--border-color);">Комментарий</th>
+                                    <th rowspan="2" class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider border-l" style="border-color: var(--border-color);">Действия</th>
+                                </tr>
+                                <tr>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider border-l" style="border-color: var(--border-color);">Темп.</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Влаж.</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Давл.</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider border-l" style="border-color: var(--border-color);">Cyan</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Magenta</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Yellow</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">Black</th>
+                                    <th class="px-6 py-3 text-center align-middle text-xs font-medium text-secondary uppercase tracking-wider">White</th>
+                                </tr>
+                            </thead>
+                            <tbody id="klimat-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Air Quality View -->
+            <div id="vozduh-view" class="hidden">
+                 <div class="card">
+                    <h2 class="text-2xl font-semibold mb-6">Добавить новую запись</h2>
+                    <form id="add-vozduh-form" class="space-y-4">
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="vozduh-date" class="block text-sm font-medium text-secondary">Дата</label>
+                                <input type="date" id="vozduh-date" class="mt-1 form-input" required>
+                            </div>
+                            <div>
+                                <label for="vozduh-time" class="block text-sm font-medium text-secondary">Время</label>
+                                <input type="time" id="vozduh-time" class="mt-1 form-input" required>
+                            </div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <div><label for="hcho" class="block text-sm font-medium text-secondary">HCHO</label><input type="number" step="0.001" id="hcho" class="mt-1 form-input" placeholder="0.010" required></div>
+                            <div><label for="tvoc" class="block text-sm font-medium text-secondary">TVOC</label><input type="number" step="0.001" id="tvoc" class="mt-1 form-input" placeholder="0.08" required></div>
+                            <div><label for="pm25" class="block text-sm font-medium text-secondary">PM2.5</label><input type="number" step="0.001" id="pm25" class="mt-1 form-input" placeholder="5.0" required></div>
+                            <div><label for="pm10" class="block text-sm font-medium text-secondary">PM10</label><input type="number" step="0.001" id="pm10" class="mt-1 form-input" placeholder="8.0" required></div>
+                            <div><label for="co2" class="block text-sm font-medium text-secondary">CO2</label><input type="number" step="0.001" id="co2" class="mt-1 form-input" placeholder="450" required></div>
+                        </div>
+                        <div>
+                            <label for="vozduh-comment" class="block text-sm font-medium text-secondary">Комментарий</label>
+                            <textarea id="vozduh-comment" rows="2" class="mt-1 form-textarea" placeholder="Введите комментарий..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-submit w-full mt-4">Добавить</button>
+                    </form>
+                </div>
+                 <div class="card mt-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                        <h2 class="text-2xl font-semibold">Журнал качества воздуха</h2>
+                        <div class="flex items-center gap-2">
+                            <input type="date" id="vozduh-search-date" class="form-input w-auto text-sm">
+                            <button id="vozduh-search-btn" class="btn btn-submit w-auto px-4 py-2 text-sm rounded-md">Найти</button>
+                            <button id="vozduh-reset-btn" class="btn btn-secondary w-auto px-4 py-2 text-sm rounded-md">Сбросить</button>
+                        </div>
+                    </div>
+                    <div id="vozduh-loading" class="text-center text-secondary py-8">Загрузка данных...</div>
+                    <div id="vozduh-table-container" class="overflow-x-auto hidden scrollable-table">
+                        <table class="min-w-full divide-y" style="border-color: var(--border-color);">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Время</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">HCHO (мг/м³)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">TVOC (мг/м³)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">PM2.5 (мкг/м³)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">PM10 (мкг/м³)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">CO2 (ppm)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Комментарий</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vozduh-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generic History View -->
+            <div id="history-view" class="hidden">
+                 <div class="card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 id="history-title" class="text-2xl font-semibold">История изменений</h2>
+                        <button id="back-btn" class="btn btn-secondary px-4 py-2 text-sm w-auto">Назад</button>
+                    </div>
+                    <div class="overflow-x-auto scrollable-table">
+                        <table class="min-w-full divide-y" style="border-color: var(--border-color);">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Дата</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Пользователь</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Действие</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Детали</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="card w-full max-w-sm">
+            <h2 class="text-xl font-semibold mb-4" id="confirm-modal-title">Подтвердить удаление</h2>
+            <p id="confirm-modal-text" class="text-secondary mb-6">Вы уверены, что хотите удалить эту запись? Это действие необратимо.</p>
+            <div class="flex justify-end gap-4">
+                <button type="button" id="confirm-cancel-btn" class="btn btn-secondary">Отмена</button>
+                <button type="button" id="confirm-delete-btn" class="btn bg-red-600 hover:bg-red-700 text-white">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal-overlay hidden">
+        <div class="card w-full max-w-lg">
+            <h2 class="text-xl font-semibold mb-4" id="edit-modal-title">Редактировать запись</h2>
+            <form id="edit-form" class="space-y-4 max-h-[70vh] overflow-y-auto pr-4">
+                <!-- Dynamic content will be injected here by JavaScript -->
+            </form>
+            <div class="flex justify-end gap-4 mt-6">
+                <button type="button" id="edit-cancel-btn" class="btn btn-secondary">Отмена</button>
+                <button type="submit" form="edit-form" id="edit-save-btn" class="btn btn-submit">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
 
     <script type="module">
         // --- Firebase Initialization ---
-        const firebaseConfig = {
-          apiKey: "AIzaSyAaIh33CJZXGzN9JmzgCLOER8AfJJKIV80",
-          authDomain: "cveta-67f31.firebaseapp.com",
-          projectId: "cveta-67f31",
-          storageBucket: "cveta-67f31.appspot.com",
-          messagingSenderId: "379571445431",
-          appId: "1:379571445431:web:d41e2477feac5c29e97732",
-          measurementId: "G-7EYBRBV2JN"
-        };
-
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, updateDoc, deleteDoc, writeBatch, getDocs, runTransaction, query, orderBy, where, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // --- Global State & Constants ---
-        let db, auth, currentUser;
-        let materialsCollectionRef, categoriesCollectionRef;
-        let unsubscribeMaterials, unsubscribeCategories;
-        let allMaterials = [], allCategories = [];
-        let currentFilter = 'All';
-        let sortConfig = { category: 'Утвержденная самоклейка', direction: 'asc' };
-        let isLoginMode = true;
-        const ADMIN_EMAIL = "lequangduc19865@gmail.com";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, serverTimestamp, getDocs, doc, getDoc, updateDoc, deleteDoc, orderBy, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const nomenclatureMap = { 'Бумажная полуглянцевая': 'semi gloss paper am/aw01/yellow glassine(fz)', 'Белая полимерная': '60# pp pearl film(tc)/acrylic w05/white glassine', 'Прозрачный хрусталь': '50# transparent pp film(tc)/acrylic 32/30# pet liner', 'Императорский синий': 'BeautyStick(1-15)Blue', 'Императорский красный': 'BeautyStick(01-15)Silver', 'Императорское золото': 'BeautyStick(1-15)Gold', 'Императорское серебро': 'BeautyStick(1-15)Red', 'Глянцевое серебро': 'Bright Silver PP 50um/AS500/white glassine', 'Голографическое серебро': '50PP TRANSPARENT AS500WG60 125г/м2+MPET12 мкм WP-02 Радуга', 'Прозрачный сахар': 'Glitter Transparent LamiFilm(05-90)GT-LT85-30P', };
-        const materialNameSuggestions = { 'Утвержденная самоклейка': ['Бумажная полуглянцевая', 'Белая полимерная', 'Прозрачный хрусталь', 'Императорский синий', 'Императорский красный', 'Императорское золото', 'Императорское серебро', 'Глянцевое серебро', 'Голографическое серебро', 'Прозрачный сахар'], 'Самоклейка тест': ['Бумажная - белая термобумага', 'Бумажная - полуглянцевая', 'Бумажная - белая винная', 'Бумажная - белая матовая', 'Бумажная - белая термобумага морозостойкая', 'Бумажная - белая полуглянцевая бумага', 'Бумажная - серебряная глянцевая бумага', 'Бумажная - серебряная матовая бумага', 'Бумажная - китайская полуглянцевая бумага', 'Полимерная - белая', 'Полимерная - мутная прозрачка', 'Полимерная - супер прозрачная', 'Полимерная - прозрачная', 'Полимерная - серебряная глянцевая', 'Полимерная - белая мутная', 'Полимерная - тонкая прозрачная', 'Другие - прозрачный ПВХ'], 'Не утвержденная самоклейка': ['Голографическая радуга', 'Черная самоклейка с тач покрытием', 'Мутная прозрачка (Pe85)', 'Винная бумага (Antarctic white от Стиктрейд)'], 'Фольга ДжетТач': [], 'Фольга DMS': ['Фольга золото ППФ', 'Фольга серебро ППФ', 'Фольга голография ППФ', 'Фольга зеленая ППФ', 'Фольга голография ДубльВ', 'Фольга золото ДубльВ', 'Фольга серебро ДубльВ'], 'Краска': ['GIP White', 'GIP Cyan', 'GIP Magenta', 'GIP Yellow', 'GIP Key'], 'Лак DMS': ['Лак DMS SJ-SM01'], 'Жидкие расходники': ['Антифриз Felix G12', 'Вода дистиллированная Oilright', 'Антифриз Prestone (для GIP)', 'Wash (для GIP)', 'Этилацетат (для мойки)', 'Метоксипропанол (УФ смывка)', 'Изопропиловый спирт (для мойки)', 'Platenclene (Очиститель валов)', 'Матовый лак VMG UV Flexo', 'Матовый лак Танзор Графилак UV 903', 'Праймер Танзор Графилак UV 368', 'Праймер Артмарк BUF-6301D-4', 'Wash DMS SJ-QX01', 'Водный раствор аммиака ЧДА'] };
-        const initialDataRaw = [ { name: "Антифриз Felix G12", quantity: 20, unit: "кг", category: "Жидкие расходники" },{ name: "Вода дистиллированная Oilright", quantity: 10, unit: "л", category: "Жидкие расходники" },{ name: "Антифриз Prestone (для GIP)", quantity: 7.56, unit: "л", category: "Жидкие расходники" },{ name: "Wash (для GIP)", quantity: 52, unit: "л", category: "Жидкие расходники" }, { name: "GIP White", quantity: 96.8, unit: "л", category: "Краска" }, { name: "GIP Cyan", quantity: 63.5, unit: "л", category: "Краска" }, { name: "GIP Magenta", quantity: 62.5, unit: "л", category: "Краска" }, { name: "GIP Yellow", quantity: 64.3, unit: "л", category: "Краска" }, { name: "GIP Key", quantity: 63.2, unit: "л", category: "Краска" }, { name: "Лак DMS SJ-SM01", quantity: 65, unit: "л", category: "Лак DMS" }, { name: "Этилацетат (для мойки)", quantity: 35, unit: "л", category: "Жидкие расходники" },{ name: "Метоксипропанол (УФ смывка)", quantity: 16, unit: "кг", category: "Жидкие расходники" },{ name: "Изопропиловый спирт (для мойки)", quantity: 20, unit: "л", category: "Жидкие расходники" },{ name: "Platenclene (Очиститель валов)", quantity: 0.7, unit: "л", category: "Жидкие расходники" },{ name: "Матовый лак VMG UV Flexo", quantity: 37, unit: "кг", category: "Жидкие расходники" },{ name: "Матовый лак Танзор Графилак UV 903", quantity: 9, unit: "кг", category: "Жидкие расходники" },{ name: "Праймер Танзор Графилак UV 368", quantity: 4.5, unit: "кг", category: "Жидкие расходники" },{ name: "Праймер Артмарк BUF-6301D-4", quantity: 17.5, unit: "кг", category: "Жидкие расходники" },{ name: "Wash DMS SJ-QX01", quantity: 1, unit: "л", category: "Жидкие расходники" },{ name: "Водный раствор аммиака ЧДА", quantity: 9, unit: "кг", category: "Жидкие расходники" },{ name: "Бумажная полуглянцевая 330 мм", quantity: 43956, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Белая полимерная 330 мм", quantity: 7992, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный хрусталь 330 мм", quantity: 15000, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный хрусталь 280 мм", quantity: 9280, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорский синий 330 мм", quantity: 11050, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорский красный 330 мм", quantity: 11380, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское золото 330 мм", quantity: 7250, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское золото 270 мм", quantity: 4000, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Императорское серебро 330 мм", quantity: 10950, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Глянцевое серебро 210 мм", quantity: 17700, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Глянцевое серебро 330 мм", quantity: 76500, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 330 мм", quantity: 5578, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 214 мм", quantity: 6140, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Голографическое серебро 150 мм", quantity: 6140, unit: "м/п", category: "Утвержденная самоклейка" },{ name: "Прозрачный сахар 330 мм", quantity: 5450, unit: "м/п", category: "Утвержденная самоклейка" }, { name: "Фольга золото ППФ 330 мм", quantity: 4900, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ППФ 330 мм", quantity: 4900, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга голография ППФ 330 мм", quantity: 440, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга зеленая ППФ 330 мм", quantity: 450, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга голография ДубльВ 330 мм", quantity: 1500, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 330 мм", quantity: 500, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 330 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 100 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 130 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 150 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 160 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга золото ДубльВ 210 мм", quantity: 2000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 130 мм", quantity: 6000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 150 мм", quantity: 5000, unit: "м/п", category: "Фольга DMS" },{ name: "Фольга серебро ДубльВ 160 мм", quantity: 11000, unit: "м/п", category: "Фольга DMS" }, { name: "Бумажная - белая термобумага 210 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 250 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 290 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 280 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая винная 300 мм", quantity: 30, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - полуглянцевая 225 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 255 мм", quantity: 370, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая матовая 210 мм", quantity: 138, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага 251 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая термобумага морозостойкая 270 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая матовая 250 мм", quantity: 48, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая полуглянцевая бумага 320 мм", quantity: 490, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая полуглянцевая бумага 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - белая винная 140 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - серебряная глянцевая бумага 320 мм", quantity: 400, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - серебряная матовая бумага 320 мм", quantity: 390, unit: "м/п", category: "Самоклейка тест" }, { name: "Бумажная - китайская полуглянцевая бумага 330 мм", quantity: 500, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 305 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 320 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - супер прозрачная 290 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - супер прозрачная 250 мм", quantity: 60, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 330 мм", quantity: 230, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 170 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 330 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 300 мм", quantity: 50, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 280 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 230 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачка 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 300 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 265 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - серебряная глянцевая 330 мм", quantity: 40, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 330 мм", quantity: 350, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 295 мм", quantity: 200, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - прозрачная 250 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - мутная прозрачная 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая 330 мм", quantity: 400, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - белая мутная 330 мм", quantity: 300, unit: "м/п", category: "Самоклейка тест" }, { name: "Полимерная - тонкая прозрачная 330 мм", quantity: 800, unit: "м/п", category: "Самоклейка тест" }, { name: "Другие - прозрачный ПВХ 240 мм", quantity: 100, unit: "м/п", category: "Самоклейка тест" }, { name: "Голографическая радуга 330 мм", quantity: 11910, unit: "м/п", category: "Не утвержденная самоклейка", nomenclature: "50PP TRANSPARENT AS500WG60 125г/м2+UV TOP(01-18) IRIS T розово-зеленая" }, { name: "Черная самоклейка с тач покрытием 330 мм", quantity: 272, unit: "м/п", category: "Не утвержденная самоклейка" }, { name: "Мутная прозрачка (Pe85) 330 мм", quantity: 11589, unit: "м/п", category: "Не утвержденная самоклейка", nomenclature: "transparent pe film 85#/w05/white glassine" }, { name: "Винная бумага (Antarctic white от Стиктрейд) 330 мм", quantity: 100, unit: "м/п", category: "Не утвержденная самоклейка" }, ];
-        
-        // --- Main App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-            } catch(e) {
-                console.error("Firebase initialization failed:", e);
-                document.body.innerHTML = '<h1>Ошибка инициализации Firebase. Проверьте объект firebaseConfig.</h1>';
-                return;
-            }
+            
+            // --- Firebase Configuration ---
+            const firebaseConfig = {
+                apiKey: "AIzaSyAfGrhtzScHVYMb4Li1muz56jzZdbBz6Ac",
+                authDomain: "klimat-gip.firebaseapp.com",
+                projectId: "klimat-gip",
+                storageBucket: "klimat-gip.appspot.com",
+                messagingSenderId: "369527961205",
+                appId: "1:369527961205:web:8c57ab4e68725832e8b625"
+            };
+            
+            // --- Initialize Firebase ---
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            const appId = firebaseConfig.projectId;
 
+            // --- App State ---
+            const ADMIN_EMAIL = 'lequangduc19865@gmail.com';
+            let currentUserEmail = null;
+            let unsubscribeKlimat, unsubscribeKlimatHistory, unsubscribeVozduh, unsubscribeVozduhHistory;
+            let allKlimatEntries = [];
+            let allVozduhRecords = [];
+            let itemToDeleteContext = { id: null, type: null };
+            let itemToEditContext = { id: null, type: null, data: null };
+            let lastActiveTabId = 'tab-klimat';
+
+            // --- UI Elements ---
+            const authContainer = document.getElementById('auth-container');
+            const appContainer = document.getElementById('app-container');
+            const loginView = document.getElementById('login-view');
+            const registerView = document.getElementById('register-view');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const logoutBtn = document.getElementById('logout-btn');
+            const userEmailEl = document.getElementById('user-email');
+            const loginError = document.getElementById('login-error');
+            const registerError = document.getElementById('register-error');
+            const klimatView = document.getElementById('klimat-view');
+            const vozduhView = document.getElementById('vozduh-view');
+            const historyView = document.getElementById('history-view');
+            const historyTitle = document.getElementById('history-title');
+            const historyTableBody = document.getElementById('history-table-body');
+            const tabKlimat = document.getElementById('tab-klimat');
+            const tabVozduh = document.getElementById('tab-vozduh');
+            // MODAL Elements
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+            const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+            // EDIT MODAL Elements
+            const editModal = document.getElementById('edit-modal');
+            const editModalTitle = document.getElementById('edit-modal-title');
+            const editForm = document.getElementById('edit-form');
+            const editCancelBtn = document.getElementById('edit-cancel-btn');
+            
+            const themeToggle = document.getElementById('theme-toggle');
+            const docHtml = document.documentElement;
+            const addKlimatForm = document.getElementById('add-klimat-form');
+            const klimatTableBody = document.getElementById('klimat-table-body');
+            const historyBtn = document.getElementById('history-btn');
+            const backBtn = document.getElementById('back-btn');
+            const addVozduhForm = document.getElementById('add-vozduh-form');
+            const vozduhTableBody = document.getElementById('vozduh-table-body');
+
+
+            // --- Authentication State Observer ---
             onAuthStateChanged(auth, user => {
-                const authScreen = document.getElementById('auth-screen');
-                const appScreen = document.getElementById('app-screen');
                 if (user) {
-                    currentUser = user;
-                    const isAdmin = currentUser.email === ADMIN_EMAIL;
-                    
-                    authScreen.style.display = 'none';
-                    appScreen.style.display = 'block';
-                    
-                    document.getElementById('user-email').innerHTML = `${user.email} ${isAdmin ? '<span class="text-xs font-bold text-yellow-500 bg-yellow-400/10 px-2 py-1 rounded-full">Администратор</span>' : ''}`;
-                    document.getElementById('add-material-card').style.display = isAdmin ? 'block' : 'none';
-                    document.getElementById('global-history-btn').style.display = isAdmin ? 'inline-block' : 'none';
-                    document.getElementById('manage-categories-btn').style.display = isAdmin ? 'inline-block' : 'none';
-                    
-                    materialsCollectionRef = collection(db, `materials`);
-                    categoriesCollectionRef = collection(db, 'categories');
-                    checkAndAddInitialData();
-                    listenForMaterials();
-                    listenForCategories();
+                    currentUserEmail = user.email;
+                    authContainer.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                    userEmailEl.textContent = user.email;
+                    if (user.email === ADMIN_EMAIL) {
+                        historyBtn.classList.remove('hidden');
+                    }
+                    initializeAppLogic();
                 } else {
-                    currentUser = null;
-                    authScreen.style.display = 'flex';
-                    appScreen.style.display = 'none';
-                    if (unsubscribeMaterials) unsubscribeMaterials();
-                    if (unsubscribeCategories) unsubscribeCategories();
+                    currentUserEmail = null;
+                    authContainer.classList.remove('hidden');
+                    appContainer.classList.add('hidden');
+                    userEmailEl.textContent = '';
+                    historyBtn.classList.add('hidden');
+                    if (unsubscribeKlimat) unsubscribeKlimat();
+                    if (unsubscribeKlimatHistory) unsubscribeKlimatHistory();
+                    if (unsubscribeVozduh) unsubscribeVozduh();
+                    if (unsubscribeVozduhHistory) unsubscribeVozduhHistory();
                 }
             });
-            
-            setupEventListeners();
-            updateAuthView();
-        });
 
-        // --- Helper Functions ---
-        function processInitialData(data) {
-            return data.map(item => {
-                const match = item.name.match(/(\s*\d+\s*мм)/);
-                let newItem = { ...item, width: null, nomenclature: item.nomenclature || null };
-                if (match) {
-                    newItem.width = parseInt(match[1].trim(), 10);
-                    newItem.name = item.name.replace(match[0], '').trim();
-                }
-                if (newItem.category === 'Утвержденная самоклейка' && nomenclatureMap[newItem.name]) {
-                    newItem.nomenclature = nomenclatureMap[newItem.name];
-                }
-                return newItem;
-            });
-        }
-        const initialData = processInitialData(initialDataRaw);
+            // --- Authentication Handlers ---
+            showRegisterBtn.addEventListener('click', (e) => { e.preventDefault(); loginView.classList.add('hidden'); registerView.classList.remove('hidden'); });
+            showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); registerView.classList.add('hidden'); loginView.classList.remove('hidden'); });
+            registerForm.addEventListener('submit', (e) => { e.preventDefault(); handleRegistration(); });
+            loginForm.addEventListener('submit', (e) => { e.preventDefault(); handleLogin(); });
+            logoutBtn.addEventListener('click', () => { signOut(auth).catch(error => console.error("Logout error:", error)); });
 
-        function handleFirebaseError(error, context) {
-            console.error(`Firebase Error in ${context}:`, error);
-            const errorContainer = document.getElementById('error-container');
-            const errorMessage = document.getElementById('error-message');
-            const loadingMessage = document.getElementById('loading-message');
-            if(loadingMessage) loadingMessage.style.display = 'none';
-            if (error.code === 'auth/configuration-not-found') {
-                errorMessage.innerHTML = '<strong>Ошибка конфигурации:</strong> Email/Password вход не включен в вашем проекте Firebase. <br>Пожалуйста, перейдите в Firebase Console -> Authentication -> Sign-in method и включите провайдера "Email/Password".';
-            } else if (error.code === 'permission-denied') {
-                errorMessage.innerHTML = `<strong>Ошибка доступа:</strong> У вас нет прав для выполнения этого действия. Убедитесь, что ваши правила Firestore настроены правильно.`;
-            } else {
-                errorMessage.textContent = `Произошла ошибка при "${context}". Проверьте консоль.`;
+            function handleRegistration() {
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                createUserWithEmailAndPassword(auth, email, password).catch(handleAuthError(registerError));
             }
-            errorContainer.classList.remove('hidden');
-        }
 
-        function updateAuthView() {
-            const authTitle = document.getElementById('auth-title');
-            const authButton = document.getElementById('auth-button');
-            const confirmPasswordContainer = document.getElementById('confirm-password-container');
-            const confirmPasswordInput = document.getElementById('confirm-password');
-            const authTogglePrompt = document.getElementById('auth-toggle-prompt');
-            const toggleAuthModeLink = document.getElementById('toggle-auth-mode');
-            const authMessage = document.getElementById('auth-message');
-
-            authMessage.textContent = ''; 
-
-            if (isLoginMode) {
-                authTitle.textContent = 'Вход в систему';
-                authButton.textContent = 'Войти';
-                confirmPasswordContainer.classList.add('hidden');
-                confirmPasswordInput.required = false;
-                authTogglePrompt.textContent = 'Нет аккаунта? ';
-                toggleAuthModeLink.textContent = 'Зарегистрироваться';
-            } else {
-                authTitle.textContent = 'Регистрация';
-                authButton.textContent = 'Зарегистрироваться';
-                confirmPasswordContainer.classList.remove('hidden');
-                confirmPasswordInput.required = true;
-                authTogglePrompt.textContent = 'Уже есть аккаунт? ';
-                toggleAuthModeLink.textContent = 'Войти';
+            function handleLogin() {
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                signInWithEmailAndPassword(auth, email, password).catch(handleAuthError(loginError));
             }
-        }
-
-
-        // --- Event Listeners Setup ---
-        function setupEventListeners() {
-            // Auth Listeners
-            document.getElementById('toggle-auth-mode').addEventListener('click', (e) => {
-                e.preventDefault();
-                isLoginMode = !isLoginMode;
-                updateAuthView();
-            });
-
-            document.getElementById('auth-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const authMessage = document.getElementById('auth-message');
-                authMessage.textContent = '';
-                authMessage.classList.remove('text-green-500', 'text-red-500');
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                if (isLoginMode) {
-                    try {
-                        await signInWithEmailAndPassword(auth, email, password);
-                    } catch (error) {
-                        console.error("Login Error:", error);
-                        authMessage.classList.add('text-red-500');
-                        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                            authMessage.textContent = 'Неверный email или пароль.';
-                        } else {
-                            authMessage.textContent = 'Произошла ошибка входа.';
-                        }
-                    }
-                } else { // Registration Mode
-                    const confirmPassword = document.getElementById('confirm-password').value;
-                    if (password !== confirmPassword) {
-                        authMessage.textContent = 'Пароли не совпадают.';
-                        authMessage.classList.add('text-red-500');
-                        return;
-                    }
-                    if (password.length < 6) {
-                        authMessage.textContent = 'Пароль должен быть не менее 6 символов.';
-                        authMessage.classList.add('text-red-500');
-                        return;
-                    }
-                    try {
-                        await createUserWithEmailAndPassword(auth, email, password);
-                        authMessage.textContent = 'Регистрация прошла успешно! Теперь вы можете войти.';
-                        authMessage.classList.add('text-green-500');
-                        isLoginMode = true;
-                        updateAuthView();
-                    } catch (error) {
-                        console.error("Registration Error:", error);
-                        authMessage.classList.add('text-red-500');
-                        if (error.code === 'auth/email-already-in-use') {
-                            authMessage.textContent = 'Этот email уже зарегистрирован.';
-                        } else if (error.code === 'auth/weak-password') {
-                            authMessage.textContent = 'Пароль слишком слабый.';
-                        } else {
-                            authMessage.textContent = 'Произошла ошибка регистрации.';
-                        }
-                    }
-                }
-            });
-
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                signOut(auth);
-            });
             
-            document.getElementById('global-history-btn').addEventListener('click', openGlobalHistoryModal);
-            document.getElementById('manage-categories-btn').addEventListener('click', openManageCategoriesModal);
-
-
-            // Add Material Form
-            const addForm = document.getElementById('add-material-form');
-            addForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('material-name').value.trim();
-                const quantity = document.getElementById('material-quantity').value;
-                const unit = document.getElementById('material-unit').value;
-                const category = document.getElementById('material-category').value;
-                const width = document.getElementById('material-width').value;
-                const nomenclature = document.getElementById('material-nomenclature').value.trim();
-                if (name && quantity && unit && category) {
-                    addMaterial(name, quantity, unit, category, width || null, nomenclature || null);
-                    document.getElementById('material-name').value = '';
-                    document.getElementById('material-quantity').value = '';
-                    document.getElementById('material-width').value = '';
-                    document.getElementById('material-nomenclature').value = '';
-                    handleCategoryChange();
+            function handleAuthError(errorElement) {
+                return function(error) {
+                    console.error("Auth error:", error);
+                    errorElement.textContent = "Ошибка: " + error.message;
+                    errorElement.classList.remove('hidden');
                 }
-            });
-            document.getElementById('material-category').addEventListener('change', handleCategoryChange);
+            }
+            
+            // --- Main App Logic Initializer ---
+            function initializeAppLogic() {
+                setupEventListeners();
+                listenForKlimatDataChanges();
+                listenForVozduhDataChanges();
+                seedVozduhDataFromPDF(); 
+                setDefaultDateTimes();
+            }
 
-            // Material List Actions
-            document.getElementById('materials-list').addEventListener('click', (e) => {
-                const target = e.target.closest('button');
-                if (!target) return;
-                if (target.classList.contains('sort-btn')) {
-                    sortConfig.category = target.dataset.category;
-                    sortConfig.direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-                    renderMaterials();
+            // --- Theme Toggle Logic ---
+            function applyTheme() {
+                if (themeToggle.checked) {
+                    docHtml.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    docHtml.classList.remove('light');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+            if (localStorage.getItem('theme') === 'light') themeToggle.checked = true;
+            else themeToggle.checked = false;
+            applyTheme();
+            themeToggle.addEventListener('change', applyTheme);
+
+            // --- Tab Navigation ---
+            function handleTabClick(event) {
+                lastActiveTabId = event.currentTarget.id;
+                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('#klimat-view, #vozduh-view').forEach(view => view.classList.add('hidden'));
+                event.currentTarget.classList.add('active');
+                document.getElementById(event.currentTarget.dataset.view).classList.remove('hidden');
+                if(currentUserEmail === ADMIN_EMAIL){
+                    historyBtn.textContent = lastActiveTabId === 'tab-klimat' ? 'Общая история Климат' : 'Общая история Качество воздуха';
+                }
+                historyView.classList.add('hidden');
+            }
+            tabKlimat.addEventListener('click', handleTabClick);
+            tabVozduh.addEventListener('click', handleTabClick);
+            
+            // #############################################
+            // #          KLIMAT GIP SECTION             #
+            // #############################################
+            const klimatDataRef = collection(db, `artifacts/${appId}/public/data/gip_stats`);
+            const klimatHistoryRef = collection(db, `artifacts/${appId}/public/data/gip_stats_history`);
+
+            function listenForKlimatDataChanges() {
+                const q = query(klimatDataRef, orderBy('date', 'desc'));
+                unsubscribeKlimat = onSnapshot(q, (snapshot) => {
+                    allKlimatEntries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderKlimatTable(allKlimatEntries);
+                }, (error) => console.error("Error loading Klimat data:", error));
+            }
+            
+            function renderKlimatTable(data) {
+                const tableBody = klimatTableBody;
+                const loadingState = document.getElementById('klimat-loading');
+                const tableContainer = document.getElementById('klimat-table-container');
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    loadingState.textContent = 'Нет данных для отображения.';
+                    loadingState.classList.remove('hidden');
+                    tableContainer.classList.add('hidden');
                     return;
                 }
-                const materialId = target.dataset.id;
-                const materialName = target.dataset.name;
-                const materialCategory = target.dataset.category;
-
-                if (target.classList.contains('update-btn')) openUpdateModal(materialId, target.dataset.action);
-                if (target.classList.contains('delete-btn')) openDeleteConfirmModal(materialId);
-                if (target.classList.contains('history-btn')) openHistoryModal(materialId, materialName);
-                if (target.classList.contains('move-btn')) openMoveMaterialModal(materialId, materialName, materialCategory);
-            });
-
-            // Filters
-            document.getElementById('category-filters').addEventListener('click', (e) => {
-                const target = e.target.closest('button.filter-btn');
-                if (target) {
-                    currentFilter = target.dataset.category;
-                    const currentActive = document.querySelector('#category-filters .active-filter');
-                    if(currentActive) currentActive.classList.remove('active-filter');
-                    target.classList.add('active-filter');
-                    const showWidthSearch = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS', 'All'].includes(currentFilter);
-                    document.getElementById('width-search-container').classList.toggle('hidden', !showWidthSearch);
-                    document.getElementById('width-search-input').value = '';
-                    renderMaterials();
-                }
-            });
-            document.getElementById('name-search-input').addEventListener('input', renderMaterials);
-            document.getElementById('width-search-input').addEventListener('input', renderMaterials);
-            document.getElementById('width-search-reset').addEventListener('click', () => {
-                document.getElementById('width-search-input').value = '';
-                renderMaterials();
-            });
-
-            // Modal Listeners
-            document.getElementById('update-quantity-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = document.getElementById('modal-material-id').value;
-                const action = document.getElementById('modal-action-type').value;
-                const changeValue = Number(document.getElementById('quantity-change').value);
-                const comment = document.getElementById('quantity-comment').value.trim();
-                if (id && changeValue > 0) {
-                    updateMaterialQuantity(id, action === 'add' ? changeValue : -changeValue, comment);
-                    closeUpdateModal();
-                }
-            });
-            document.getElementById('write-off-all-btn').addEventListener('click', () => {
-                const id = document.getElementById('modal-material-id').value;
-                const material = allMaterials.find(m => m.id === id);
-                const comment = document.getElementById('quantity-comment').value.trim() || 'Списание всех остатков';
-                if (material) {
-                    updateMaterialQuantity(id, -material.quantity, comment);
-                    closeUpdateModal();
-                }
-            });
-            document.getElementById('cancel-update').addEventListener('click', closeUpdateModal);
-            document.querySelector('#update-modal .modal-backdrop').addEventListener('click', closeUpdateModal);
-            document.getElementById('confirm-delete').addEventListener('click', () => {
-                const materialId = document.getElementById('confirm-delete').dataset.id;
-                if(materialId) {
-                    deleteMaterial(materialId);
-                    closeDeleteConfirmModal();
-                }
-            });
-            document.getElementById('cancel-delete').addEventListener('click', closeDeleteConfirmModal);
-            document.querySelector('#delete-confirm-modal .modal-backdrop').addEventListener('click', closeDeleteConfirmModal);
-            document.getElementById('close-history-modal').addEventListener('click', closeHistoryModal);
-            document.querySelector('#history-modal .modal-backdrop').addEventListener('click', closeHistoryModal);
-            document.getElementById('close-global-history-modal').addEventListener('click', closeGlobalHistoryModal);
-            document.querySelector('#global-history-modal .modal-backdrop').addEventListener('click', closeGlobalHistoryModal);
-            document.getElementById('close-categories-modal').addEventListener('click', closeManageCategoriesModal);
-            document.querySelector('#manage-categories-modal .modal-backdrop').addEventListener('click', closeManageCategoriesModal);
-            document.getElementById('cancel-move').addEventListener('click', closeMoveMaterialModal);
-            document.querySelector('#move-material-modal .modal-backdrop').addEventListener('click', closeMoveMaterialModal);
-            document.getElementById('add-category-form').addEventListener('submit', handleAddCategory);
-            document.getElementById('move-material-form').addEventListener('submit', handleMoveMaterial);
-        
-            // Theme toggle listener
-            const themeToggleInput = document.getElementById('theme-toggle-input');
-
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                    themeToggleInput.checked = true;
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    themeToggleInput.checked = false;
-                }
-            }
-
-            themeToggleInput.addEventListener('change', () => {
-                const newTheme = themeToggleInput.checked ? 'dark' : 'light';
-                localStorage.setItem('theme', newTheme);
-                applyTheme(newTheme);
-            });
-            
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            applyTheme(savedTheme);
-        }
-
-        // --- Firebase Data Functions ---
-        async function checkAndAddInitialData() {
-             try {
-                const materialsSnap = await getDocs(materialsCollectionRef);
-                if (materialsSnap.empty) {
-                    const batch = writeBatch(db);
-                    initialData.forEach(material => {
-                        const docRef = doc(materialsCollectionRef);
-                        batch.set(docRef, { ...material, createdAt: new Date() });
-                    });
-                    await batch.commit();
-                }
-                const categoriesSnap = await getDocs(categoriesCollectionRef);
-                if(categoriesSnap.empty) {
-                    const initialCategories = [...new Set(initialData.map(item => item.category))];
-                    const batch = writeBatch(db);
-                    initialCategories.forEach(name => {
-                        const docRef = doc(categoriesCollectionRef);
-                        batch.set(docRef, { name });
-                    });
-                    await batch.commit();
-                }
-            } catch (error) {
-                handleFirebaseError(error, 'проверке и добавлении начальных данных');
-            }
-        }
-        function listenForMaterials() {
-            if (unsubscribeMaterials) unsubscribeMaterials();
-            const q = query(materialsCollectionRef);
-            unsubscribeMaterials = onSnapshot(q, (snapshot) => {
-                document.getElementById('error-container').classList.add('hidden');
-                allMaterials = [];
-                snapshot.forEach((doc) => {
-                    allMaterials.push({ id: doc.id, ...doc.data() });
-                });
-                renderMaterials();
-            }, (error) => {
-                handleFirebaseError(error, 'получении данных в реальном времени');
-            });
-        }
-        function listenForCategories() {
-             if (unsubscribeCategories) unsubscribeCategories();
-             const q = query(categoriesCollectionRef, orderBy("name"));
-             unsubscribeCategories = onSnapshot(q, (snapshot) => {
-                allCategories = [];
-                 snapshot.forEach((doc) => {
-                    allCategories.push(doc.data().name);
-                 });
-                 updateCategoryUI();
-             });
-        }
-        async function addMaterial(name, quantity, unit, category, width, nomenclature) {
-            try {
-                const materialWidth = width ? Number(width) : null;
-                const q = query( materialsCollectionRef, where("name", "==", name), where("category", "==", category), where("width", "==", materialWidth) );
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    const existingDoc = querySnapshot.docs[0];
-                    await updateMaterialQuantity(existingDoc.id, Number(quantity), 'Приход');
-                } else {
-                    const newMaterialRef = doc(materialsCollectionRef);
-                    const historyRef = collection(newMaterialRef, 'history');
-                    const batch = writeBatch(db);
-                    const materialData = { name, quantity: Number(quantity), unit, category, createdAt: new Date(), width: materialWidth, nomenclature: nomenclature || null };
-                    batch.set(newMaterialRef, materialData);
-                    batch.set(doc(historyRef), { 
-                        change: Number(quantity), 
-                        newQuantity: Number(quantity), 
-                        type: 'add', 
-                        timestamp: new Date(), 
-                        user: currentUser.email, 
-                        comment: 'Первоначальное добавление',
-                        materialName: name,
-                        materialWidth: materialWidth
-                    });
-                    await batch.commit();
-                }
-            } catch (error) {
-                 handleFirebaseError(error, 'добавлении материала');
-            }
-        }
-        async function updateMaterialQuantity(id, quantityChange, comment = '') {
-            const materialRef = doc(materialsCollectionRef, id);
-            const historyRef = collection(materialRef, 'history');
-            try {
-                await runTransaction(db, async (transaction) => {
-                    const materialDoc = await transaction.get(materialRef);
-                    if (!materialDoc.exists()) { throw "Документ не существует!"; }
-                    
-                    const materialData = materialDoc.data();
-                    const currentQuantity = materialData.quantity;
-                    const newQuantity = currentQuantity + quantityChange;
-                    if (newQuantity < 0) { return; }
-                    
-                    transaction.update(materialRef, { quantity: newQuantity });
-                    
-                    const historyDocRef = doc(historyRef);
-                    transaction.set(historyDocRef, {
-                        change: quantityChange,
-                        newQuantity: newQuantity,
-                        type: quantityChange > 0 ? 'add' : 'subtract',
-                        timestamp: new Date(),
-                        user: currentUser ? currentUser.email : 'Unknown',
-                        comment: comment,
-                        materialName: materialData.name,
-                        materialWidth: materialData.width || null
-                    });
-                });
-            } catch (error) {
-                handleFirebaseError(error, 'обновлении количества');
-            }
-        }
-        async function deleteMaterial(id) {
-            try {
-                await deleteDoc(doc(materialsCollectionRef, id));
-            } catch (error) {
-                handleFirebaseError(error, 'удалении материала');
-            }
-        }
-        async function handleAddCategory(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-category-name');
-            const messageEl = document.getElementById('category-message');
-            const newCategoryName = input.value.trim();
-            if (!newCategoryName) return;
-
-            if (allCategories.map(c => c.toLowerCase()).includes(newCategoryName.toLowerCase())) {
-                messageEl.textContent = 'Такая категория уже существует.';
-                messageEl.className = 'text-sm text-center mt-3 text-red-500';
-                return;
-            }
-
-            try {
-                await addDoc(categoriesCollectionRef, { name: newCategoryName });
-                messageEl.textContent = 'Категория добавлена!';
-                messageEl.className = 'text-sm text-center mt-3 text-green-500';
-                input.value = '';
-                setTimeout(() => { messageEl.textContent = ''; }, 2000);
-            } catch(error) {
-                handleFirebaseError(error, 'добавлении категории');
-            }
-        }
-        async function handleMoveMaterial(e) {
-            e.preventDefault();
-            const materialId = document.getElementById('move-material-form').dataset.materialId;
-            const newCategory = document.getElementById('move-category-select').value;
-            if(!materialId || !newCategory) return;
-            try {
-                await updateDoc(doc(materialsCollectionRef, materialId), {
-                    category: newCategory
-                });
-                closeMoveMaterialModal();
-            } catch (error) {
-                 handleFirebaseError(error, 'перемещении материала');
-            }
-        }
-
-
-        // --- UI Rendering & Modal Functions ---
-        function updateCategoryUI() {
-            // Update filter buttons
-            const filtersContainer = document.getElementById('category-filters');
-            filtersContainer.innerHTML = `<button data-category="All" class="filter-btn">Все</button>`;
-            allCategories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'filter-btn';
-                btn.dataset.category = cat;
-                btn.textContent = cat;
-                if (cat === 'Утвержденная самоклейка') btn.style.backgroundColor = 'var(--approved-bg)';
-                if (cat === 'Не утвержденная самоклейка') btn.style.backgroundColor = 'var(--unapproved-bg)';
-                filtersContainer.appendChild(btn);
-            });
-            const activeFilterBtn = filtersContainer.querySelector(`[data-category="${currentFilter}"]`) || filtersContainer.querySelector(`[data-category="All"]`);
-            activeFilterBtn.classList.add('active-filter');
-
-            // Update select dropdowns
-            const addFormSelect = document.getElementById('material-category');
-            addFormSelect.innerHTML = allCategories.map(c => `<option value="${c}">${c}</option>`).join('');
-            handleCategoryChange(); // re-populate suggestions
-        }
-
-        function renderMaterials() {
-            const listElement = document.getElementById('materials-list');
-            const loadingMessage = document.getElementById('loading-message');
-            const widthSearchInput = document.getElementById('width-search-input');
-            const nameSearchInput = document.getElementById('name-search-input');
-            let materialsToRender = currentFilter === 'All' ? allMaterials : allMaterials.filter(m => m.category === currentFilter);
-            const nameSearchTerm = nameSearchInput.value.toLowerCase().trim();
-            if (nameSearchTerm) {
-                materialsToRender = materialsToRender.filter(m => m.name.toLowerCase().includes(nameSearchTerm) || (m.nomenclature && m.nomenclature.toLowerCase().includes(nameSearchTerm)) );
-            }
-            const searchWidth = widthSearchInput.value;
-            if (searchWidth) {
-                 materialsToRender = materialsToRender.filter(m => m.width === Number(searchWidth));
-            }
-            listElement.innerHTML = '';
-            if (document.getElementById('error-container').classList.contains('hidden')) {
-                loadingMessage.style.display = materialsToRender.length === 0 ? 'block' : 'none';
-                loadingMessage.textContent = 'Материалы не найдены.';
-            }
-            const groupedByCategory = materialsToRender.reduce((acc, material) => {
-                const category = material.category || 'Другое';
-                if (!acc[category]) acc[category] = [];
-                acc[category].push(material);
-                return acc;
-            }, {});
-            Object.keys(groupedByCategory).sort().forEach(category => {
-                const categoryHeaderContainer = document.createElement('div');
-                categoryHeaderContainer.className = 'category-header-container';
-                if (category === 'Утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-approved'); }
-                else if (category === 'Не утвержденная самоклейка') { categoryHeaderContainer.classList.add('category-header-unapproved'); }
-                categoryHeaderContainer.innerHTML = `<h3 class="text-xl font-bold category-header">${category}</h3>`;
-                if (['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка'].includes(category)) {
-                    const sortButton = document.createElement('button');
-                    sortButton.className = 'sort-btn';
-                    sortButton.dataset.category = category;
-                    sortButton.innerHTML = `Ширина ${sortConfig.direction === 'asc' ? '▲' : '▼'}`;
-                    categoryHeaderContainer.appendChild(sortButton);
-                }
-                const categoryContainer = document.createElement('div');
-                categoryContainer.appendChild(categoryHeaderContainer);
-                const itemsContainer = document.createElement('div');
-                itemsContainer.className = 'space-y-3';
-                const sortedItems = groupedByCategory[category].sort((a, b) => {
-                    if (['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка'].includes(category)) {
-                        return sortConfig.direction === 'asc' ? (a.width || 0) - (b.width || 0) : (b.width || 0) - (a.width || 0);
-                    }
-                    return a.name.localeCompare(b.name);
-                });
-                sortedItems.forEach(material => {
-                    const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
-                    const card = document.createElement('div');
-                    card.className = 'card p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4';
-                    const quantityColor = material.quantity < 100 ? 'text-red-500' : 'text-green-600';
-                    card.innerHTML = ` <div class="flex-grow"> <div class="flex items-baseline gap-3 flex-wrap"> <h4 class="text-lg font-bold header-title">${material.name}</h4> ${material.width ? `<p class="text-base font-semibold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full">${material.width} мм</p>` : ''} </div> ${material.nomenclature ? `<p class="text-xs text-secondary mt-1">${material.nomenclature}</p>` : ''} <p class="text-sm text-secondary mt-2">Остаток:</p> <p class="text-2xl font-bold ${quantityColor}">${material.quantity} <span class="text-base font-normal">${material.unit}</span></p> </div> <div class="flex items-center gap-2 w-full sm:w-auto"> ${isAdmin ? `<button data-id="${material.id}" data-name="${material.name}" data-category="${material.category}" class="move-btn flex-1 sm:flex-none w-10 h-10 text-purple-700 hover:bg-purple-100 dark:hover:bg-purple-900/50 dark:text-purple-400 rounded-full flex items-center justify-center transition" title="Переместить"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg></button>` : ''} <button data-id="${material.id}" data-action="add" class="update-btn flex-1 sm:flex-none w-10 h-10 text-green-700 hover:bg-green-100 dark:hover:bg-green-900/50 dark:text-green-400 rounded-full flex items-center justify-center text-2xl font-bold transition">+</button> <button data-id="${material.id}" data-action="subtract" class="update-btn flex-1 sm:flex-none w-10 h-10 text-yellow-700 hover:bg-yellow-100 dark:hover:bg-yellow-900/50 dark:text-yellow-400 rounded-full flex items-center justify-center text-2xl font-bold transition">-</button> <button data-id="${material.id}" data-name="${material.name}" class="history-btn flex-1 sm:flex-none w-10 h-10 text-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/50 dark:text-blue-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button> ${isAdmin ? `<button data-id="${material.id}" class="delete-btn flex-1 sm:flex-none w-10 h-10 text-red-700 hover:bg-red-100 dark:hover:bg-red-900/50 dark:text-red-400 rounded-full flex items-center justify-center transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` : ''} </div>`;
-                    itemsContainer.appendChild(card);
-                });
-                categoryContainer.appendChild(itemsContainer);
-                listElement.appendChild(categoryContainer);
-            });
-        }
-        function handleCategoryChange() { const categorySelect = document.getElementById('material-category'); const widthContainer = document.getElementById('material-width-container'); const nameDatalist = document.getElementById('material-names-list'); const nameInput = document.getElementById('material-name'); const selectedCategory = categorySelect.value; const categoriesWithWidth = ['Утвержденная самоклейка', 'Самоклейка тест', 'Не утвержденная самоклейка', 'Фольга ДжетТач', 'Фольга DMS']; widthContainer.classList.toggle('hidden', !categoriesWithWidth.includes(selectedCategory)); nameDatalist.innerHTML = ''; if (materialNameSuggestions[selectedCategory]) { materialNameSuggestions[selectedCategory].forEach(name => { const option = document.createElement('option'); option.value = name; nameDatalist.appendChild(option); }); } }
-        function openUpdateModal(id, action) { const modal = document.getElementById('update-modal'); const writeOffBtn = document.getElementById('write-off-all-btn'); document.getElementById('modal-material-id').value = id; document.getElementById('modal-action-type').value = action; document.getElementById('update-quantity-form').reset(); document.getElementById('modal-title').textContent = action === 'add' ? 'Приход материала' : 'Списание материала'; if (action === 'subtract') { writeOffBtn.classList.remove('hidden'); } else { writeOffBtn.classList.add('hidden'); } modal.style.display = 'flex'; }
-        function closeUpdateModal() { document.getElementById('update-modal').style.display = 'none'; }
-        function openDeleteConfirmModal(id) { const modal = document.getElementById('delete-confirm-modal'); document.getElementById('confirm-delete').dataset.id = id; modal.style.display = 'flex'; }
-        function closeDeleteConfirmModal() { document.getElementById('delete-confirm-modal').style.display = 'none'; }
-        async function openHistoryModal(id, name) {
-            const modal = document.getElementById('history-modal');
-            const title = document.getElementById('history-modal-title');
-            const container = document.getElementById('history-log-container');
-            title.textContent = `История: ${name}`;
-            container.innerHTML = '<p class="text-secondary">Загрузка истории...</p>';
-            modal.style.display = 'flex';
-            try {
-                const historyRef = collection(db, `materials/${id}/history`);
-                const q = query(historyRef, orderBy('timestamp', 'desc'));
-                const snapshot = await getDocs(q);
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-secondary">История операций пуста.</p>';
-                    return;
-                }
-                snapshot.forEach(doc => {
-                    const entry = doc.data();
-                    const logItem = document.createElement('div');
-                    logItem.className = 'p-3 rounded-lg';
-                    const isAdd = entry.type === 'add';
-                    logItem.classList.add(isAdd ? 'history-item-add' : 'history-item-subtract');
-                    const date = entry.timestamp.toDate().toLocaleString('ru-RU');
-                    const changeText = isAdd ? `+${entry.change}` : `${entry.change}`;
-                    const changeColor = isAdd ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
-                    const typeText = isAdd ? 'Приход' : 'Списание';
-                    const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : '';
-                    const userHtml = entry.user ? `<p class="text-xs text-secondary mt-1">Пользователь: ${entry.user}</p>` : '';
-                    logItem.innerHTML = ` <div class="flex justify-between items-start"> <div> <p class="font-semibold header-title">${typeText}</p> <p class="text-sm text-secondary">${date}</p> ${commentHtml} ${userHtml} </div> <div class="text-right flex-shrink-0 ml-4"> <p class="font-bold text-lg ${changeColor}">${changeText}</p> <p class="text-sm text-secondary">Остаток: ${entry.newQuantity}</p> </div> </div> `;
-                    container.appendChild(logItem);
-                });
-            } catch (error) {
-                handleFirebaseError(error, 'загрузке истории');
-            }
-        }
-        function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
-        
-        async function openGlobalHistoryModal() {
-            const modal = document.getElementById('global-history-modal');
-            const container = document.getElementById('global-history-log-container');
-            container.innerHTML = '<p class="text-secondary">Загрузка общей истории...</p>';
-            modal.style.display = 'flex';
-
-            try {
-                const historyQuery = query(collectionGroup(db, 'history'), orderBy('timestamp', 'desc'));
-                const snapshot = await getDocs(historyQuery);
+                loadingState.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
                 
-                container.innerHTML = '';
-                if (snapshot.empty) {
-                    container.innerHTML = '<p class="text-secondary">История операций пуста.</p>';
+                const groupedData = {};
+                data.forEach(entry => {
+                    const entryDate = entry.date.toDate();
+                    const dateKey = entryDate.toDateString();
+                    if (!groupedData[dateKey]) groupedData[dateKey] = [];
+                    groupedData[dateKey].push({ ...entry, date: entryDate });
+                });
+
+                const sortedDates = Object.keys(groupedData).sort((a, b) => new Date(b) - new Date(a));
+
+                sortedDates.forEach(dateKey => {
+                    const date = new Date(dateKey);
+                    const formattedDate = date.toLocaleDateString('ru-RU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    const dateRow = document.createElement('tr');
+                    dateRow.innerHTML = `<td colspan="11" class="px-6 py-2 text-sm font-semibold" style="background-color: var(--date-header-bg);">${formattedDate}</td>`;
+                    tableBody.appendChild(dateRow);
+
+                    const entriesForDay = groupedData[dateKey].sort((a, b) => a.date - b.date);
+                    entriesForDay.forEach(entry => {
+                        const row = document.createElement('tr');
+                        const isProblem = entry.comment && entry.comment.trim() !== 'Прострелов, полос нет';
+                        if (isProblem) row.style.backgroundColor = 'var(--problem-bg)';
+                        row.style.transition = 'background-color 0.3s';
+                        row.addEventListener('mouseover', () => { row.style.backgroundColor = isProblem ? 'var(--problem-hover-bg)' : 'var(--hover-bg)'; });
+                        row.addEventListener('mouseout', () => { row.style.backgroundColor = isProblem ? 'var(--problem-bg)' : 'transparent'; });
+                        const formattedTime = entry.date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+                        row.innerHTML = `
+                            <td class="px-6 py-4 text-center align-middle text-sm">${formattedTime}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.temp ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.humidity ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.pressure ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.cyan ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.magenta ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.yellow ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.black ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.white ?? ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">${entry.comment || ''}</td>
+                            <td class="px-6 py-4 text-center align-middle text-sm">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button data-id="${entry.id}" data-type="klimat" class="edit-btn p-1 hover:text-yellow-500" title="Редактировать">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
+                                    </button>
+                                    <button data-id="${entry.id}" data-type="klimat" class="delete-btn p-1 hover:text-red-500" title="Удалить">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
+                            </td>`;
+                        tableBody.appendChild(row);
+                    });
+                });
+            }
+
+            async function handleAddKlimatEntry(e) {
+                e.preventDefault();
+                const dateValue = document.getElementById('klimat-date').value;
+                const timeValue = document.getElementById('klimat-time').value;
+                if (!dateValue || !timeValue) return;
+
+                const commentSelect = document.getElementById('klimat-comment');
+                let commentValue = commentSelect.value;
+                if (commentValue === 'other') {
+                    commentValue = document.getElementById('klimat-custom-comment').value || '';
+                }
+                
+                const newEntryData = {
+                    date: new Date(`${dateValue}T${timeValue}`),
+                    temp: parseFloat(document.getElementById('temp').value),
+                    humidity: parseFloat(document.getElementById('humidity').value),
+                    pressure: parseFloat(document.getElementById('pressure').value),
+                    cyan: parseFloat(document.getElementById('cyan').value),
+                    magenta: parseFloat(document.getElementById('magenta').value),
+                    yellow: parseFloat(document.getElementById('yellow').value),
+                    black: parseFloat(document.getElementById('black').value),
+                    white: parseFloat(document.getElementById('white').value),
+                    comment: commentValue,
+                    createdAt: serverTimestamp()
+                };
+
+                try {
+                    const docRef = await addDoc(klimatDataRef, newEntryData);
+                    const logDetails = { ...newEntryData, date: newEntryData.date.toISOString() };
+                    delete logDetails.createdAt;
+                    await logKlimatHistory('create', docRef.id, { newData: logDetails });
+                    e.target.reset();
+                    setDefaultDateTimes();
+                    document.getElementById('klimat-custom-comment-wrapper').classList.add('hidden');
+                } catch (error) {
+                    console.error("Failed to add Klimat entry:", error);
+                }
+            }
+            
+            // #############################################
+            // #    VOZDUH (AIR QUALITY) SECTION         #
+            // #############################################
+            const vozduhDataRef = collection(db, `artifacts/${appId}/public/data/air_quality_records`);
+            const vozduhHistoryRef = collection(db, `artifacts/${appId}/public/data/air_quality_history`);
+
+            const vozduhParams = {
+                hcho: { thresholds: { good: 0.01, moderate: 0.05 } },
+                tvoc: { thresholds: { good: 0.3, moderate: 1.0 } },
+                pm25: { thresholds: { good: 15, moderate: 35 } },
+                pm10: { thresholds: { good: 45, moderate: 75 } },
+                co2:  { thresholds: { good: 800, moderate: 1200 } }
+            };
+
+            function listenForVozduhDataChanges() {
+                const q = query(vozduhDataRef, orderBy('datetime', 'desc'));
+                unsubscribeVozduh = onSnapshot(q, (snapshot) => {
+                    allVozduhRecords = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        const jsDate = data.datetime.toDate();
+                        return { id: doc.id, ...data, datetime: jsDate, date: jsDate.toISOString().slice(0, 10) }
+                    });
+                    renderVozduhTable(allVozduhRecords);
+                }, (error) => console.error("Error loading Vozduh data:", error));
+            }
+
+            function renderVozduhTable(data) {
+                const tableBody = vozduhTableBody;
+                const loadingState = document.getElementById('vozduh-loading');
+                const tableContainer = document.getElementById('vozduh-table-container');
+                tableBody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    loadingState.textContent = 'Нет данных. Добавьте первую запись.';
+                    loadingState.classList.remove('hidden');
+                    tableContainer.classList.add('hidden');
                     return;
                 }
+                
+                loadingState.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
 
-                const materialNamesCache = new Map();
-
-                for (const doc of snapshot.docs) {
-                    const entry = doc.data();
-                    let materialDisplayName = 'Неизвестный материал';
-
-                    if (entry.materialName) {
-                        materialDisplayName = `${entry.materialName} ${entry.materialWidth ? `(${entry.materialWidth} мм)` : ''}`;
-                    } else {
-                        const materialDocRef = doc.ref.parent.parent;
-                        if (materialDocRef) {
-                            if (materialNamesCache.has(materialDocRef.id)) {
-                                materialDisplayName = materialNamesCache.get(materialDocRef.id);
-                            } else {
-                                try {
-                                    const materialDocSnap = await getDoc(materialDocRef);
-                                    if (materialDocSnap.exists()) {
-                                        const materialData = materialDocSnap.data();
-                                        materialDisplayName = `${materialData.name} ${materialData.width ? `(${materialData.width} мм)` : ''}`;
-                                        materialNamesCache.set(materialDocRef.id, materialDisplayName);
-                                    }
-                                } catch (e) { console.error("Could not fetch parent material:", e); }
-                            }
-                        }
+                let lastDate = null;
+                data.forEach(record => {
+                    const currentDate = record.date;
+                    if (currentDate !== lastDate) {
+                        const formattedDate = new Date(currentDate).toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                        const headerRow = document.createElement('tr');
+                        headerRow.innerHTML = `<td colspan="8" class="px-6 py-2 font-bold" style="background-color: var(--date-header-bg);">${formattedDate}</td>`;
+                        tableBody.appendChild(headerRow);
+                        lastDate = currentDate;
                     }
                     
-                    const logItem = document.createElement('div');
-                    logItem.className = 'p-3 rounded-lg';
-                    const isAdd = entry.type === 'add';
-                    logItem.classList.add(isAdd ? 'history-item-add' : 'history-item-subtract');
+                    const row = document.createElement('tr');
+                    row.style.transition = 'background-color 0.3s';
+                    row.addEventListener('mouseover', () => { row.style.backgroundColor = 'var(--hover-bg)'; });
+                    row.addEventListener('mouseout', () => { row.style.backgroundColor = 'transparent'; });
+                    
+                    const formattedTime = record.datetime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 
-                    const date = entry.timestamp.toDate().toLocaleString('ru-RU');
-                    const changeText = isAdd ? `+${entry.change}` : `${entry.change}`;
-                    const changeColor = isAdd ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
-                    const typeText = isAdd ? 'Приход' : 'Списание';
-                    const commentHtml = entry.comment ? `<p class="text-sm text-secondary mt-1 italic">"${entry.comment}"</p>` : '';
-                    const userDisplay = entry.user || 'Неизвестно';
-                    const userHtml = `<p class="text-xs text-secondary mt-1">Пользователь: ${userDisplay}</p>`;
-
-                    logItem.innerHTML = `
-                        <div class="flex justify-between items-start flex-wrap">
-                            <div>
-                                <p class="font-bold header-title">${materialDisplayName}</p>
-                                <p class="font-semibold header-title">${typeText}</p>
-                                <p class="text-sm text-secondary">${date}</p>
-                                ${commentHtml}
-                                ${userHtml}
+                    let cellsHTML = `<td class="px-6 py-4 text-sm font-medium whitespace-nowrap">${formattedTime}</td>`;
+                    Object.keys(vozduhParams).forEach(key => {
+                        const value = record[key];
+                        const statusClass = (v, c) => v === null || v === undefined ? '' : v > c.thresholds.moderate ? 'status-bad' : v > c.thresholds.good ? 'status-moderate' : 'status-good';
+                        const formattedValue = value !== null ? value.toFixed(key === 'co2' ? 0 : 3) : '--';
+                        cellsHTML += `<td class="px-6 py-4 text-sm"><span class="status-dot ${statusClass(value, vozduhParams[key])}"></span><span>${formattedValue}</span></td>`;
+                    });
+                    
+                    cellsHTML += `
+                        <td class="px-6 py-4 text-sm text-secondary whitespace-pre-wrap">${record.comment || '--'}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <div class="flex items-center space-x-2">
+                                 <button title="Редактировать запись" class="edit-btn p-1 hover:text-yellow-500" data-type="vozduh" data-id="${record.id}">
+                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
+                                </button>
+                                <button title="Удалить запись" class="delete-btn p-1 hover:text-red-500" data-type="vozduh" data-id="${record.id}">
+                                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
                             </div>
-                            <div class="text-right flex-shrink-0 ml-4 mt-2 sm:mt-0">
-                               <p class="font-bold text-lg ${changeColor}">${changeText}</p>
-                               <p class="text-sm text-secondary">Остаток: ${entry.newQuantity}</p>
+                        </td>`;
+                    row.innerHTML = cellsHTML;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            async function handleAddVozduhRecord(event) {
+                event.preventDefault();
+                const date = document.getElementById('vozduh-date').value;
+                const time = document.getElementById('vozduh-time').value;
+
+                const newRecord = {
+                    datetime: Timestamp.fromDate(new Date(`${date}T${time}`)),
+                    hcho: parseFloat(document.getElementById('hcho').value),
+                    tvoc: parseFloat(document.getElementById('tvoc').value),
+                    pm25: parseFloat(document.getElementById('pm25').value),
+                    pm10: parseFloat(document.getElementById('pm10').value),
+                    co2:  parseFloat(document.getElementById('co2').value),
+                    comment: document.getElementById('vozduh-comment').value.trim() || null
+                };
+
+                try {
+                    const docRef = await addDoc(vozduhDataRef, newRecord);
+                    const logDetails = { ...newRecord, datetime: newRecord.datetime.toDate().toISOString() };
+                    await logVozduhHistory('create', docRef.id, { newData: logDetails });
+                    event.target.reset();
+                    setDefaultDateTimes();
+                } catch (e) {
+                    console.error("Error adding Vozduh document: ", e);
+                }
+            }
+            
+            // #############################################
+            // #      PDF DATA SEEDING SECTION           #
+            // #############################################
+            
+            async function seedVozduhDataFromPDF() {
+                const snapshot = await getDocs(query(vozduhDataRef));
+                if (!snapshot.empty) {
+                    return;
+                }
+                
+                console.log("Air quality collection is empty. Seeding data from PDF...");
+
+                const pdfData = [
+                    { date: "2025-08-13", time: "09:10", hcho: 0.112, tvoc: 0.308, pm25: 0.11, pm10: 0.15, co2: 1080, comment: null },
+                    { date: "2025-08-13", time: "18:52", hcho: 0.351, tvoc: 0.960, pm25: 0.14, pm10: 0.19, co2: 1762, comment: null },
+                    { date: "2025-08-14", time: "12:00", hcho: 0.584, tvoc: 1.576, pm25: 0.27, pm10: 0.37, co2: 2043, comment: "В середине рабочего дня не хватало кислорода." },
+                    { date: "2025-08-14", time: "19:30", hcho: 0.100, tvoc: 0.316, pm25: 0.12, pm10: 0.15, co2: 1020, comment: null },
+                    { date: "2025-08-15", time: "09:15", hcho: 0.523, tvoc: 1.464, pm25: 0.17, pm10: 0.23, co2: 2004, comment: null },
+                    { date: "2025-08-15", time: "19:15", hcho: 0.040, tvoc: 0.123, pm25: 0.11, pm10: 0.16, co2: 706, comment: null },
+                    { date: "2025-08-16", time: "09:15", hcho: 0.048, tvoc: 0.123, pm25: 0.11, pm10: 0.15, co2: 723, comment: null },
+                    { date: "2025-08-16", time: "19:50", hcho: 0.012, tvoc: 0.033, pm25: 0.11, pm10: 0.18, co2: 470, comment: null },
+                    { date: "2025-08-17", time: "09:15", hcho: 0.284, tvoc: 1.576, pm25: 0.22, pm10: 0.30, co2: 1783, comment: null },
+                    { date: "2025-08-17", time: "19:50", hcho: 0.210, tvoc: 0.518, pm25: 0.16, pm10: 0.22, co2: 1515, comment: null },
+                    { date: "2025-08-18", time: "09:30", hcho: 1.500, tvoc: 1.700, pm25: 0.57, pm10: 0.79, co2: 3627, comment: null },
+                    { date: "2025-08-18", time: "20:15", hcho: 0.357, tvoc: 1.022, pm25: 0.12, pm10: 0.14, co2: 1823, comment: null },
+                    { date: "2025-08-19", time: "09:05", hcho: 0.980, tvoc: 1.743, pm25: 0.19, pm10: 0.22, co2: 2659, comment: null },
+                    { date: "2025-08-19", time: "20:55", hcho: 0.122, tvoc: 0.347, pm25: 0.12, pm10: 0.18, co2: 1157, comment: null },
+                    { date: "2025-08-20", time: "09:05", hcho: 1.956, tvoc: 1.999, pm25: 0.30, pm10: 0.40, co2: 4204, comment: null },
+                    { date: "2025-08-21", time: "09:05", hcho: 0.000, tvoc: 0.000, pm25: 0.10, pm10: 0.16, co2: 101, comment: null },
+                    { date: "2025-08-22", time: "19:40", hcho: 1.707, tvoc: 1.290, pm25: 0.79, pm10: 1.10, co2: 3792, comment: null },
+                    { date: "2025-08-24", time: "09:05", hcho: 0.926, tvoc: 1.600, pm25: 0.11, pm10: 0.16, co2: 2664, comment: null },
+                    { date: "2025-08-25", time: "09:20", hcho: 0.300, tvoc: 1.100, pm25: 0.22, pm10: 0.30, co2: 1806, comment: null },
+                    { date: "2025-08-26", time: "10:00", hcho: 0.000, tvoc: 0.000, pm25: 0.13, pm10: 0.15, co2: 109, comment: null },
+                    { date: "2025-08-26", time: "20:40", hcho: 0.012, tvoc: 0.039, pm25: 0.63, pm10: 0.88, co2: 459, comment: null },
+                    { date: "2025-08-27", time: "09:05", hcho: 0.158, tvoc: 0.445, pm25: 0.11, pm10: 0.18, co2: 1355, comment: null },
+                    { date: "2025-08-27", time: "20:45", hcho: 1.697, tvoc: 1.270, pm25: 0.19, pm10: 0.26, co2: 3808, comment: null },
+                    { date: "2025-08-28", time: "09:05", hcho: 0.000, tvoc: 0.000, pm25: 0.13, pm10: 0.18, co2: 11, comment: null },
+                    { date: "2025-08-28", time: "20:50", hcho: 0.012, tvoc: 0.047, pm25: 0.49, pm10: 0.67, co2: 443, comment: null },
+                    { date: "2025-08-29", time: "09:10", hcho: 1.034, tvoc: 1.240, pm25: 0.30, pm10: 0.42, co2: 2340, comment: null },
+                    { date: "2025-08-29", time: "20:20", hcho: 1.300, tvoc: 1.929, pm25: 0.49, pm10: 0.68, co2: 3209, comment: null },
+                    { date: "2025-08-30", time: "11:10", hcho: 0.680, tvoc: 1.900, pm25: 0.22, pm10: 0.30, co2: 2219, comment: null },
+                    { date: "2025-08-30", time: "20:10", hcho: 1.600, tvoc: 1.100, pm25: 0.30, pm10: 0.50, co2: 3682, comment: null },
+                    { date: "2025-08-31", time: "09:15", hcho: 0.500, tvoc: 1.400, pm25: 0.11, pm10: 0.18, co2: 1971, comment: null },
+                    { date: "2025-08-31", time: "20:00", hcho: 0.150, tvoc: 0.500, pm25: 0.11, pm10: 0.15, co2: 470, comment: null },
+                    { date: "2025-09-01", time: "13:00", hcho: 0.483, tvoc: 1.243, pm25: 30.0, pm10: 42.0, co2: 1790, comment: null },
+                    { date: "2025-09-03", time: "11:30", hcho: 0.210, tvoc: 0.588, pm25: 22.0, pm10: 29.0, co2: 1564, comment: null },
+                    { date: "2025-09-03", time: "17:50", hcho: 1.265, tvoc: 1.930, pm25: 35.0, pm10: 50.0, co2: 3258, comment: null },
+                    { date: "2025-09-04", time: "09:10", hcho: 0.570, tvoc: 1.600, pm25: 0.20, pm10: 0.28, co2: 2076, comment: null }
+                ];
+
+                const batch = writeBatch(db);
+                pdfData.forEach(record => {
+                    const docRef = doc(vozduhDataRef); 
+                    const newRecord = {
+                        datetime: Timestamp.fromDate(new Date(`${record.date}T${record.time}`)),
+                        hcho: record.hcho,
+                        tvoc: record.tvoc,
+                        pm25: record.pm25,
+                        pm10: record.pm10,
+                        co2: record.co2,
+                        comment: record.comment
+                    };
+                    batch.set(docRef, newRecord);
+                });
+
+                try {
+                    await batch.commit();
+                    console.log("Successfully seeded air quality data from PDF!");
+                } catch (error) {
+                    console.error("Error seeding air quality data: ", error);
+                }
+            }
+
+
+            // #############################################
+            // #      GENERAL & SHARED SECTION           #
+            // #############################################
+            
+            function setupEventListeners() {
+                // Main View Listeners
+                addKlimatForm.addEventListener('submit', handleAddKlimatEntry);
+                addVozduhForm.addEventListener('submit', handleAddVozduhRecord);
+                
+                klimatTableBody.addEventListener('click', handleTableActions);
+                vozduhTableBody.addEventListener('click', handleTableActions);
+
+                document.getElementById('klimat-comment').addEventListener('change', (e) => {
+                    document.getElementById('klimat-custom-comment-wrapper').classList.toggle('hidden', e.target.value !== 'other');
+                });
+                
+                // Search Listeners
+                document.getElementById('search-btn').addEventListener('click', handleKlimatSearch);
+                document.getElementById('reset-btn').addEventListener('click', resetKlimatSearch);
+                document.getElementById('vozduh-search-btn').addEventListener('click', handleVozduhSearch);
+                document.getElementById('vozduh-reset-btn').addEventListener('click', resetVozduhSearch);
+
+                // History Listeners
+                historyBtn.addEventListener('click', showHistoryView);
+                backBtn.addEventListener('click', () => { 
+                    historyView.classList.add('hidden');
+                    document.getElementById(lastActiveTabId === 'tab-klimat' ? 'klimat-view' : 'vozduh-view').classList.remove('hidden');
+                    if(unsubscribeKlimatHistory) unsubscribeKlimatHistory();
+                    if(unsubscribeVozduhHistory) unsubscribeVozduhHistory();
+                });
+                
+                // Custom confirmation modal listeners
+                confirmCancelBtn.addEventListener('click', () => {
+                    confirmModal.classList.add('hidden');
+                });
+                confirmDeleteBtn.addEventListener('click', handleConfirmDelete);
+
+                // Edit modal listeners
+                editForm.addEventListener('submit', handleUpdateEntry);
+                editCancelBtn.addEventListener('click', () => {
+                    editModal.classList.add('hidden');
+                });
+            }
+
+            function handleTableActions(e) {
+                const button = e.target.closest('button');
+                if (!button) return;
+                
+                const docId = button.dataset.id;
+                const type = button.dataset.type;
+
+                if (button.classList.contains('delete-btn')) {
+                    itemToDeleteContext = { id: docId, type: type };
+                    confirmModal.classList.remove('hidden');
+                } else if (button.classList.contains('edit-btn')) {
+                    openEditModal(docId, type);
+                }
+            }
+            
+            async function openEditModal(docId, type) {
+                const dataRef = type === 'klimat' ? klimatDataRef : vozduhDataRef;
+                const docRef = doc(dataRef, docId);
+
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        console.error("Document not found for editing!");
+                        return;
+                    }
+                    const data = docSnap.data();
+                    itemToEditContext = { id: docId, type: type, data: data };
+
+                    editModalTitle.textContent = `Редактировать запись: ${type === 'klimat' ? 'Климат' : 'Качество воздуха'}`;
+                    populateEditForm(data, type);
+                    editModal.classList.remove('hidden');
+
+                } catch (error) {
+                    console.error("Error fetching document for edit:", error);
+                }
+            }
+            
+            function populateEditForm(data, type) {
+                editForm.innerHTML = ''; // Clear previous form
+                if (type === 'klimat') {
+                    const entryDate = data.date.toDate();
+                    const dateValue = entryDate.toISOString().slice(0, 10);
+                    const timeValue = entryDate.toISOString().slice(11, 16);
+                    const standardComments = ["Прострелов, полос нет"];
+                    const isCustomComment = data.comment && !standardComments.includes(data.comment);
+                    editForm.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label for="edit-klimat-date" class="block text-sm font-medium text-secondary">Дата</label><input type="date" id="edit-klimat-date" class="mt-1 form-input" value="${dateValue}" required></div>
+                            <div><label for="edit-klimat-time" class="block text-sm font-medium text-secondary">Время</label><input type="time" id="edit-klimat-time" class="mt-1 form-input" value="${timeValue}" required></div>
+                        </div>
+                        <div>
+                            <h3 class="text-md font-semibold text-primary mb-2">Климат</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div><label class="block text-sm font-medium text-secondary">Темп. (°С)</label><input type="number" step="0.001" id="edit-temp" class="mt-1 form-input" value="${data.temp}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">Влажн. (%)</label><input type="number" step="0.001" id="edit-humidity" class="mt-1 form-input" value="${data.humidity}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">Давл. (мм)</label><input type="number" step="0.001" id="edit-pressure" class="mt-1 form-input" value="${data.pressure}" required></div>
                             </div>
                         </div>
-                    `;
-                    container.appendChild(logItem);
+                        <div>
+                            <h3 class="text-md font-semibold text-primary mb-2">Давление GIP</h3>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                                <div><label class="block text-sm font-medium text-secondary">Cyan</label><input type="number" step="0.001" id="edit-cyan" class="mt-1 form-input" value="${data.cyan}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">Magenta</label><input type="number" step="0.001" id="edit-magenta" class="mt-1 form-input" value="${data.magenta}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">Yellow</label><input type="number" step="0.001" id="edit-yellow" class="mt-1 form-input" value="${data.yellow}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">Black</label><input type="number" step="0.001" id="edit-black" class="mt-1 form-input" value="${data.black}" required></div>
+                                <div><label class="block text-sm font-medium text-secondary">White</label><input type="number" step="0.001" id="edit-white" class="mt-1 form-input" value="${data.white}" required></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="edit-klimat-comment" class="block text-sm font-medium text-secondary">Комментарий</label>
+                            <select id="edit-klimat-comment" class="mt-1 form-select">
+                                <option value="Прострелов, полос нет" ${!isCustomComment ? 'selected' : ''}>Прострелов, полос нет</option>
+                                <option value="other" ${isCustomComment ? 'selected' : ''}>Другое (ввести вручную)</option>
+                            </select>
+                            <div id="edit-klimat-custom-comment-wrapper" class="${isCustomComment ? '' : 'hidden'} mt-2">
+                                <input type="text" id="edit-klimat-custom-comment" class="mt-1 form-input" placeholder="Введите свой комментарий..." value="${isCustomComment ? data.comment : ''}">
+                            </div>
+                        </div>`;
+                    document.getElementById('edit-klimat-comment').addEventListener('change', (e) => {
+                        document.getElementById('edit-klimat-custom-comment-wrapper').classList.toggle('hidden', e.target.value !== 'other');
+                    });
+                } else if (type === 'vozduh') {
+                    const entryDate = data.datetime.toDate();
+                    const dateValue = entryDate.toISOString().slice(0, 10);
+                    const timeValue = entryDate.toISOString().slice(11, 16);
+                    editForm.innerHTML = `
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label for="edit-vozduh-date" class="block text-sm font-medium text-secondary">Дата</label><input type="date" id="edit-vozduh-date" class="mt-1 form-input" value="${dateValue}" required></div>
+                            <div><label for="edit-vozduh-time" class="block text-sm font-medium text-secondary">Время</label><input type="time" id="edit-vozduh-time" class="mt-1 form-input" value="${timeValue}" required></div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            <div><label class="block text-sm font-medium text-secondary">HCHO</label><input type="number" step="0.001" id="edit-hcho" class="mt-1 form-input" value="${data.hcho}" required></div>
+                            <div><label class="block text-sm font-medium text-secondary">TVOC</label><input type="number" step="0.001" id="edit-tvoc" class="mt-1 form-input" value="${data.tvoc}" required></div>
+                            <div><label class="block text-sm font-medium text-secondary">PM2.5</label><input type="number" step="0.001" id="edit-pm25" class="mt-1 form-input" value="${data.pm25}" required></div>
+                            <div><label class="block text-sm font-medium text-secondary">PM10</label><input type="number" step="0.001" id="edit-pm10" class="mt-1 form-input" value="${data.pm10}" required></div>
+                            <div><label class="block text-sm font-medium text-secondary">CO2</label><input type="number" step="0.001" id="edit-co2" class="mt-1 form-input" value="${data.co2}" required></div>
+                        </div>
+                        <div>
+                            <label for="edit-vozduh-comment" class="block text-sm font-medium text-secondary">Комментарий</label>
+                            <textarea id="edit-vozduh-comment" rows="2" class="mt-1 form-textarea" placeholder="Введите комментарий...">${data.comment || ''}</textarea>
+                        </div>`;
                 }
-            } catch (error) {
-                 handleFirebaseError(error, 'загрузке общей истории');
             }
-        }
-        function closeGlobalHistoryModal() { document.getElementById('global-history-modal').style.display = 'none'; }
-        
-        function openManageCategoriesModal() { document.getElementById('manage-categories-modal').style.display = 'flex'; }
-        function closeManageCategoriesModal() { document.getElementById('manage-categories-modal').style.display = 'none'; }
-        
-        function openMoveMaterialModal(id, name, currentCategory) {
-            const modal = document.getElementById('move-material-modal');
-            document.getElementById('move-material-form').dataset.materialId = id;
-            document.getElementById('move-material-name').textContent = name;
-            const select = document.getElementById('move-category-select');
-            select.innerHTML = allCategories
-                .filter(c => c !== currentCategory)
-                .map(c => `<option value="${c}">${c}</option>`)
-                .join('');
-            modal.style.display = 'flex';
-        }
-        function closeMoveMaterialModal() { document.getElementById('move-material-modal').style.display = 'none'; }
+            
+            async function handleUpdateEntry(e) {
+                e.preventDefault();
+                const { id, type, data: oldData } = itemToEditContext;
+                if (!id || !type) return;
+
+                let newData;
+                const dataRef = type === 'klimat' ? klimatDataRef : vozduhDataRef;
+                const docRef = doc(dataRef, id);
+
+                if (type === 'klimat') {
+                    const dateValue = document.getElementById('edit-klimat-date').value;
+                    const timeValue = document.getElementById('edit-klimat-time').value;
+                    const commentSelect = document.getElementById('edit-klimat-comment');
+                    let commentValue = commentSelect.value;
+                    if (commentValue === 'other') {
+                        commentValue = document.getElementById('edit-klimat-custom-comment').value || '';
+                    }
+                    newData = {
+                        date: new Date(`${dateValue}T${timeValue}`),
+                        temp: parseFloat(document.getElementById('edit-temp').value),
+                        humidity: parseFloat(document.getElementById('edit-humidity').value),
+                        pressure: parseFloat(document.getElementById('edit-pressure').value),
+                        cyan: parseFloat(document.getElementById('edit-cyan').value),
+                        magenta: parseFloat(document.getElementById('edit-magenta').value),
+                        yellow: parseFloat(document.getElementById('edit-yellow').value),
+                        black: parseFloat(document.getElementById('edit-black').value),
+                        white: parseFloat(document.getElementById('edit-white').value),
+                        comment: commentValue,
+                    };
+                } else if (type === 'vozduh') {
+                    const date = document.getElementById('edit-vozduh-date').value;
+                    const time = document.getElementById('edit-vozduh-time').value;
+                    newData = {
+                        datetime: Timestamp.fromDate(new Date(`${date}T${time}`)),
+                        hcho: parseFloat(document.getElementById('edit-hcho').value),
+                        tvoc: parseFloat(document.getElementById('edit-tvoc').value),
+                        pm25: parseFloat(document.getElementById('edit-pm25').value),
+                        pm10: parseFloat(document.getElementById('edit-pm10').value),
+                        co2: parseFloat(document.getElementById('edit-co2').value),
+                        comment: document.getElementById('edit-vozduh-comment').value.trim() || null
+                    };
+                }
+
+                try {
+                    await updateDoc(docRef, newData);
+                    if (type === 'klimat') {
+                        await logKlimatHistory('update', id, { oldData, newData });
+                    } else {
+                        await logVozduhHistory('update', id, { oldData, newData });
+                    }
+                } catch (error) {
+                    console.error("Failed to update entry:", error);
+                } finally {
+                    editModal.classList.add('hidden');
+                    itemToEditContext = { id: null, type: null, data: null };
+                }
+            }
 
 
+            function handleConfirmDelete() {
+                const { id, type } = itemToDeleteContext;
+                if (id && type) {
+                    if (type === 'klimat') handleDeleteKlimatEntry(id);
+                    else if (type === 'vozduh') handleDeleteVozduhEntry(id);
+                }
+                confirmModal.classList.add('hidden');
+                itemToDeleteContext = { id: null, type: null }; // Reset context
+            }
+
+
+            async function handleDeleteKlimatEntry(docId) {
+                const docRef = doc(klimatDataRef, docId);
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if(!docSnap.exists()) return;
+                    const deletedData = docSnap.data();
+                    await deleteDoc(docRef);
+                    await logKlimatHistory('delete', docId, { deletedData });
+                } catch(error) {
+                    console.error("Failed to delete Klimat entry:", error);
+                }
+            }
+
+            async function handleDeleteVozduhEntry(docId) {
+                const docRef = doc(vozduhDataRef, docId);
+                try {
+                     const docSnap = await getDoc(docRef);
+                    if(!docSnap.exists()) return;
+                    const deletedData = docSnap.data();
+                    await deleteDoc(docRef);
+                    await logVozduhHistory('delete', docId, { deletedData });
+                } catch(error) {
+                    console.error("Failed to delete Vozduh entry:", error);
+                }
+            }
+
+            // --- History & Search ---
+            function handleKlimatSearch() {
+                const searchDateVal = document.getElementById('search-date').value;
+                if (!searchDateVal) { renderKlimatTable(allKlimatEntries); return; }
+                const searchDate = new Date(searchDateVal);
+                const filteredData = allKlimatEntries.filter(entry => {
+                    const entryDate = entry.date.toDate();
+                    return entryDate.getFullYear() === searchDate.getFullYear() &&
+                           entryDate.getMonth() === searchDate.getMonth() &&
+                           entryDate.getDate() === searchDate.getDate();
+                });
+                renderKlimatTable(filteredData);
+            }
+
+            function resetKlimatSearch() {
+                document.getElementById('search-date').value = '';
+                renderKlimatTable(allKlimatEntries);
+            }
+
+            function showHistoryView() {
+                klimatView.classList.add('hidden');
+                vozduhView.classList.add('hidden');
+                historyView.classList.remove('hidden');
+
+                if (lastActiveTabId === 'tab-klimat') {
+                    initializeKlimatHistoryView();
+                } else {
+                    initializeVozduhHistoryView();
+                }
+            }
+            
+            // Klimat History
+            function initializeKlimatHistoryView() {
+                historyTitle.textContent = "История изменений Климат";
+                const q = query(klimatHistoryRef, orderBy('timestamp', 'desc'));
+                unsubscribeKlimatHistory = onSnapshot(q, (snapshot) => {
+                    renderKlimatHistory(snapshot.docs.map(doc => doc.data()));
+                });
+            }
+             async function logKlimatHistory(action, docId, details) {
+                const logData = { ...details };
+                if (logData.oldData?.date?.toDate) logData.oldData.date = logData.oldData.date.toDate().toISOString();
+                if (logData.newData?.date?.toDate) logData.newData.date = logData.newData.date.toDate().toISOString();
+                if (logData.deletedData?.date?.toDate) logData.deletedData.date = logData.deletedData.date.toDate().toISOString();
+                try {
+                    await addDoc(klimatHistoryRef, { action, docId, details: logData, userEmail: currentUserEmail, timestamp: serverTimestamp() });
+                } catch(error) { console.error("Failed to log Klimat history:", error); }
+            }
+            function renderKlimatHistory(historyData) {
+                historyTableBody.innerHTML = '';
+                if (historyData.length === 0) {
+                    historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-secondary">История изменений пуста.</td></tr>';
+                    return;
+                }
+                historyData.forEach(log => {
+                    const row = document.createElement('tr');
+                    const date = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('ru-RU') : 'N/A';
+                    let detailsHtml = '';
+                    if (log.action === 'create' && log.details?.newData) {
+                        detailsHtml = `Создана запись. Комментарий: "${log.details.newData.comment || ''}"`;
+                    } else if (log.action === 'delete' && log.details?.deletedData) {
+                        detailsHtml = `Удалена запись. Комментарий был: "${log.details.deletedData.comment || ''}"`;
+                    } else if (log.action === 'update' && log.details?.newData && log.details?.oldData) {
+                         const changes = Object.keys(log.details.newData).reduce((acc, key) => {
+                            const oldValue = log.details.oldData[key] ?? 'пусто';
+                            const newValue = log.details.newData[key] ?? 'пусто';
+                            
+                            // Handle date/timestamp objects for comparison
+                            const oldValStr = oldValue?.toDate ? oldValue.toDate().toISOString() : String(oldValue);
+                            const newValStr = newValue?.toDate ? newValue.toDate().toISOString() : String(newValue);
+
+                            if (oldValStr !== newValStr) {
+                                acc.push(`<b>${key}</b>: "${oldValStr}" -> "${newValStr}"`);
+                            }
+                            return acc;
+                        }, []);
+                        detailsHtml = changes.length > 0 ? `Обновлено: ${changes.join('<br>')}` : 'Запись обновлена (без изменений).';
+                    } else {
+                        detailsHtml = `Действие "${log.action}" (нет деталей)`;
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary">${log.userEmail}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary">${log.action}</td>
+                        <td class="px-6 py-4 text-sm text-secondary">${detailsHtml}</td>`;
+                    historyTableBody.appendChild(row);
+                });
+            }
+
+            // Vozduh History
+            function initializeVozduhHistoryView() {
+                historyTitle.textContent = "История изменений Качество воздуха";
+                const q = query(vozduhHistoryRef, orderBy('timestamp', 'desc'));
+                unsubscribeVozduhHistory = onSnapshot(q, (snapshot) => {
+                    renderVozduhHistory(snapshot.docs.map(doc => doc.data()));
+                });
+            }
+             async function logVozduhHistory(action, docId, details) {
+                const logData = { ...details };
+                if (logData.oldData?.datetime?.toDate) logData.oldData.datetime = logData.oldData.datetime.toDate().toISOString();
+                if (logData.newData?.datetime?.toDate) logData.newData.datetime = logData.newData.datetime.toDate().toISOString();
+                if (logData.deletedData?.datetime?.toDate) logData.deletedData.datetime = logData.deletedData.datetime.toDate().toISOString();
+                try {
+                    await addDoc(vozduhHistoryRef, { action, docId, details: logData, userEmail: currentUserEmail, timestamp: serverTimestamp() });
+                } catch(error) { console.error("Failed to log Vozduh history:", error); }
+            }
+            function renderVozduhHistory(historyData) {
+                historyTableBody.innerHTML = '';
+                if (historyData.length === 0) {
+                    historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-secondary">История изменений пуста.</td></tr>';
+                    return;
+                }
+                historyData.forEach(log => {
+                    const row = document.createElement('tr');
+                    const date = log.timestamp?.toDate ? log.timestamp.toDate().toLocaleString('ru-RU') : 'N/A';
+                    let detailsHtml = '';
+                    if (log.action === 'create' && log.details?.newData) {
+                        detailsHtml = `Создана запись. Комментарий: "${log.details.newData.comment || ''}"`;
+                    } else if (log.action === 'delete' && log.details?.deletedData) {
+                        detailsHtml = `Удалена запись. Комментарий был: "${log.details.deletedData.comment || ''}"`;
+                    } else if (log.action === 'update' && log.details?.newData && log.details?.oldData) {
+                         const changes = Object.keys(log.details.newData).reduce((acc, key) => {
+                            const oldValue = log.details.oldData[key] ?? 'пусто';
+                            const newValue = log.details.newData[key] ?? 'пусто';
+                             
+                            const oldValStr = oldValue?.toDate ? oldValue.toDate().toISOString() : String(oldValue);
+                            const newValStr = newValue?.toDate ? newValue.toDate().toISOString() : String(newValue);
+
+                            if (oldValStr !== newValStr) {
+                                acc.push(`<b>${key}</b>: "${oldValStr}" -> "${newValStr}"`);
+                            }
+                            return acc;
+                        }, []);
+                        detailsHtml = changes.length > 0 ? `Обновлено: ${changes.join('<br>')}` : 'Запись обновлена (без изменений).';
+                    } else {
+                        detailsHtml = `Действие "${log.action}" (нет деталей)`;
+                    }
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary">${log.userEmail}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary">${log.action}</td>
+                        <td class="px-6 py-4 text-sm text-secondary">${detailsHtml}</td>`;
+                    historyTableBody.appendChild(row);
+                });
+            }
+
+
+            // --- Helpers ---
+            function getNumericValue(elementId) {
+                const value = parseFloat(document.getElementById(elementId).value);
+                return isNaN(value) ? null : value;
+            }
+
+            function setDefaultDateTimes() {
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                const dateValue = now.toISOString().slice(0,10);
+                const timeValue = now.toISOString().slice(11,16);
+
+                document.getElementById('klimat-date').value = dateValue;
+                document.getElementById('klimat-time').value = timeValue;
+
+                document.getElementById('vozduh-date').value = dateValue;
+                document.getElementById('vozduh-time').value = timeValue;
+            }
+
+            function handleVozduhSearch() {
+                const searchDateVal = document.getElementById('vozduh-search-date').value;
+                if (!searchDateVal) {
+                    renderVozduhTable(allVozduhRecords);
+                    return;
+                }
+                const filteredData = allVozduhRecords.filter(record => record.date === searchDateVal);
+                renderVozduhTable(filteredData);
+            }
+
+            function resetVozduhSearch() {
+                document.getElementById('vozduh-search-date').value = '';
+                renderVozduhTable(allVozduhRecords);
+            }
+        });
     </script>
 </body>
 </html>
-
